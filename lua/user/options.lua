@@ -11,7 +11,7 @@ require("catppuccin").setup({
 	flavour = "frappe",
 })
 vim.cmd.colorscheme("catppuccin")
-
+vim.o.winborder = "rounded"
 -- General settings
 vim.o.updatetime = 100 -- Faster completion
 
@@ -116,7 +116,7 @@ local normal_mode_mappings = {
 	["<M-j>"] = { ":move+<CR>", { noremap = true, silent = true } }, -- Move line down
 
 	--LazyGit
-	["<leader>gg"] = { "<cmd>LazyGit<cr>", { desc = "LazyGit" } },
+	-- ["<leader>gg"] = { "<cmd>LazyGit<cr>", { desc = "LazyGit" } },
 
 	--Primestuff
 	["J"] = { "mzJ`z", { desc = "Join lines and keep cursor position" } },

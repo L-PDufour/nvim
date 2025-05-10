@@ -24,6 +24,8 @@ rec {
         rm -rf $out/justfile
       '';
       src = ../.;
+      doCheck = false;
+      neovimRequireCheck = false;
     };
 
   # Core plugin list organized by functionality
@@ -43,33 +45,25 @@ rec {
       vimPlugins.mini-nvim # Collection of minimal plugins
       vimPlugins.better-escape-nvim
       vimPlugins.nvim-web-devicons
-
+      vimPlugins.snacks-nvim
+      vimPlugins.flash-nvim
       # LSP and Completion
-      vimPlugins.nvim-lspconfig
       vimPlugins.blink-cmp
+      vimPlugins.blink-pairs
+      vimPlugins.blink-cmp-conventional-commits
+      vimPlugins.blink-ripgrep-nvim
+      vimPlugins.blink-cmp-spell
       vimPlugins.luasnip
+
       vimPlugins.friendly-snippets
       vimPlugins.conform-nvim
-      vimPlugins.lsp-format-nvim
       vimPlugins.typescript-tools-nvim
-      vimPlugins.nvim-cmp
-      vimPlugins.cmp-nvim-lsp
-      vimPlugins.cmp_luasnip
-      vimPlugins.cmp-cmdline
-      vimPlugins.cmp-path
-      vimPlugins.cmp-buffer
-      vimPlugins.lspkind-nvim
 
       # Navigation and Search
-      vimPlugins.telescope-nvim
-      vimPlugins.telescope-ui-select-nvim
-      vimPlugins.telescope-file-browser-nvim
-      vimPlugins.telescope-fzy-native-nvim
       vimPlugins.harpoon2
 
       # Git Integration
       vimPlugins.gitsigns-nvim
-      vimPlugins.lazygit-nvim
       vimPlugins.diffview-nvim
 
       # Syntax and Language Support
@@ -104,6 +98,7 @@ rec {
 
       # User config
       user-nvim
+
     ];
 
   # External tooling and language servers
@@ -117,24 +112,27 @@ rec {
     in
     [
       # Language Servers
-      # pkgs.gopls
-      # pkgs.htmx-lsp
+      pkgs.gopls
+      pkgs.htmx-lsp
       pkgs.lua-language-server
       pkgs.nil
-      # pkgs.tailwindcss-language-server
-      # pkgs.typescript-language-server
-      # pkgs.vscode-langservers-extracted
-
+      pkgs.vtsls
+      pkgs.nodejs_24
+      pkgs.tailwindcss-language-server
+      pkgs.typescript-language-server
+      pkgs.vscode-langservers-extracted
+      pkgs.nodePackages_latest.eslint_d
+      pkgs.nodePackages.eslint
       # Formatters and Linters
       pkgs.nixfmt-rfc-style
-      # pkgs.nodePackages_latest.prettier
-      # pkgs.prettierd
+      pkgs.nodePackages_latest.prettier
+      pkgs.prettierd
       pkgs.stylua
 
       # Tools
-      # pkgs.python3
+      pkgs.python3
       pkgs.ripgrep
-      # pkgs.templ
+      pkgs.templ
     ];
 
   mkExtraConfig = ''

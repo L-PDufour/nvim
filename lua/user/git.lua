@@ -1,4 +1,3 @@
-require("lazygit")
 require("gitsigns").setup({
 	signs = {
 		add = { text = "+" },
@@ -35,7 +34,6 @@ require("gitsigns").setup({
 		map("n", "<leader>gs", gitsigns.stage_hunk, { desc = "git [s]tage hunk" })
 		map("n", "<leader>gr", gitsigns.reset_hunk, { desc = "git [r]eset hunk" })
 		map("n", "<leader>gS", gitsigns.stage_buffer, { desc = "git [S]tage buffer" })
-		map("n", "<leader>gu", gitsigns.undo_stage_hunk, { desc = "git [u]ndo stage hunk" })
 		map("n", "<leader>gR", gitsigns.reset_buffer, { desc = "git [R]eset buffer" })
 		map("n", "<leader>gp", gitsigns.preview_hunk, { desc = "git [p]review hunk" })
 		map("n", "<leader>gb", gitsigns.blame_line, { desc = "git [b]lame line" })
@@ -45,6 +43,6 @@ require("gitsigns").setup({
 		end, { desc = "git [D]iff against last commit" })
 		-- Toggles
 		map("n", "<leader>gtl", gitsigns.toggle_current_line_blame, { desc = "[T]oggle git show [b]lame line" })
-		map("n", "<leader>gtd", gitsigns.toggle_deleted, { desc = "[T]oggle git show [D]eleted" })
+		map("n", "<leader>gtd", gitsigns.preview_hunk_inline, { desc = "[T]oggle git show [D]eleted" })
 	end,
 })
