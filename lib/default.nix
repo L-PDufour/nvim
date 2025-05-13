@@ -123,6 +123,7 @@ rec {
       pkgs.vscode-langservers-extracted
       pkgs.nodePackages_latest.eslint_d
       pkgs.nodePackages.eslint
+
       # Formatters and Linters
       pkgs.nixfmt-rfc-style
       pkgs.nodePackages_latest.prettier
