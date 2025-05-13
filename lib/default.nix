@@ -122,7 +122,7 @@ rec {
       pkgs.typescript-language-server
       pkgs.vscode-langservers-extracted
       pkgs.nodePackages_latest.eslint_d
-      pkgs.nodePackages.eslint
+      pkgs.eslint
 
       # Formatters and Linters
       pkgs.nixfmt-rfc-style
