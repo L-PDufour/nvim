@@ -106,14 +106,14 @@ vim.lsp.config.eslint = {
 -- Then enable it
 vim.lsp.enable("vtsls")
 -- Enable configured servers
-vim.lsp.enable("lua_ls")
-vim.lsp.enable("clangd")
-vim.lsp.enable("gopls")
-vim.lsp.enable("html")
-vim.lsp.enable("htmx")
-vim.lsp.enable("nil_ls")
-vim.lsp.enable("tailwindcss")
-vim.lsp.enable("templ")
+-- vim.lsp.enable("lua_ls")
+-- vim.lsp.enable("clangd")
+-- vim.lsp.enable("gopls")
+-- vim.lsp.enable("html")
+-- vim.lsp.enable("htmx")
+-- vim.lsp.enable("nil_ls")
+-- vim.lsp.enable("tailwindcss")
+-- vim.lsp.enable("templ")
 vim.lsp.enable("eslint")
 -- vim.lsp.config("eslint", {
 -- 	--- ...
