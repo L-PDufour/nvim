@@ -420,11 +420,14 @@ require("which-key").setup({
 	},
 })
 
-require("flash").setup({
+local flash = require("flash")
+
+flash.setup({
 	modes = {
-		search = { enabled = true }, -- Don't override / search
 		char = { enabled = true }, -- Don't override f/F/t/T
 	},
 })
-vim.keymap.set("n", "<leader>l", require("flash").jump, { desc = "Flash jump" })
-vim.keymap.set("o", "r", require("flash").remote, { desc = "Flash remote" })
+vim.keymap.set({ "n", "x", "o" }, "s", flash.jump, { desc = "Flash jump" })
+vim.keymap.set({ "n", "x", "o" }, "S", flash.treesitter, { desc = "Flash jump" })
+vim.keymap.set("o", "r", flash.remote, { desc = "Flash remote" })
+vim.keymap.set({ "o", "x" }, "R", flash.treesitter_search, { desc = "Flash remote" })

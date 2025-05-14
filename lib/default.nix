@@ -57,7 +57,6 @@ rec {
 
       vimPlugins.friendly-snippets
       vimPlugins.conform-nvim
-      vimPlugins.typescript-tools-nvim
 
       # Navigation and Search
       vimPlugins.harpoon2

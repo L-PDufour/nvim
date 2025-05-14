@@ -57,9 +57,8 @@ vim.lsp.config.vtsls = {
 		},
 	},
 	on_attach = function(client, bufnr)
-		-- Prioritize vtsls for formatting and code actions
-		client.server_capabilities.documentFormattingProvider = true
-
+		client.server_capabilities.documentFormattingProvider = false
+		client.server_capabilities.documentRangeFormattingProvider = false
 		-- Keybindings specific to vtsls
 		vim.keymap.set(
 			"n",
@@ -81,29 +80,24 @@ vim.lsp.config.eslint = {
 		experimental = {
 			useFlatConfig = true,
 		},
-		-- Make ESLint less intrusive
+		-- Disable auto-fixing since we use prettier
 		codeActionOnSave = {
 			enable = false, -- Don't auto-fix on save
 			mode = "problems", -- Only fix errors, not warnings
 		},
-		format = false, -- Let vtsls handle formatting
-		quiet = true, -- Suppress some ESLint output
-		run = "onSave", -- Only run on save, not on type
+		format = false, -- Let prettier handle formatting
+		quiet = false, -- Show ESLint output
+		run = "onType", -- Run on type for immediate feedback
 		validate = "on",
 		workingDirectory = {
 			mode = "location",
 		},
-		-- Only show serious problems
-		rulesCustomizations = {
-			{ rule = "*", severity = "off" }, -- Start with all rules off
-			{ rule = "no-undef", severity = "error" }, -- Only critical errors
-			{ rule = "no-unreachable", severity = "error" },
-			{ rule = "no-const-assign", severity = "error" },
-		},
+		-- Don't override rules here - use your .eslintrc file
 	},
 	on_attach = function(client, bufnr)
-		-- Disable ESLint's formatting capability
+		-- Disable ESLint's formatting capability completely
 		client.server_capabilities.documentFormattingProvider = false
+		client.server_capabilities.documentRangeFormattingProvider = false
 
 		-- Manual ESLint commands when you need them
 		vim.keymap.set("n", "<leader>le", ":EslintFixAll<CR>", { buffer = bufnr, desc = "ESLint Fix All (Manual)" })
