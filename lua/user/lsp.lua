@@ -26,85 +26,122 @@ vim.diagnostic.config({
 		},
 	},
 })
+
+-- vim.lsp.config.eslint_d = {
+-- 	cmd = { "eslint_d", "--stdio" },
+-- 	filetypes = { "javascript", "typescript", "typescriptreact", "javascriptreact" },
+-- 	root_dir = function(bufnr, cb)
+-- 		-- Convert buffer to filename
+-- 		local fname = vim.uri_to_fname(vim.uri_from_bufnr(bufnr))
+--
+-- 		-- First try to find ESLint config files
+-- 		local eslint_config_files = {
+-- 			".eslintrc",
+-- 			".eslintrc.json",
+-- 			".eslintrc.js",
+-- 			".eslintrc.cjs",
+-- 			".eslintrc.mjs",
+-- 			".eslintrc.yml",
+-- 			".eslintrc.yaml",
+-- 			"eslint.config.js",
+-- 			"eslint.config.mjs",
+-- 			"eslint.config.cjs",
+-- 		}
+--
+-- 		local root = vim.fs.find(eslint_config_files, {
+-- 			path = fname,
+-- 			upward = true,
+-- 			type = "file",
+-- 		})[1]
+--
+-- 		if root then
+-- 			cb(vim.fs.dirname(root))
+-- 			return
+-- 		end
+--
+-- 		-- Fallback to package.json or .git
+-- 		root = vim.fs.find({ "package.json", ".git" }, {
+-- 			path = fname,
+-- 			upward = true,
+-- 			type = "file",
+-- 		})[1]
+--
+-- 		if root then
+-- 			cb(vim.fs.dirname(root))
+-- 		else
+-- 			cb(vim.fn.getcwd())
+-- 		end
+-- 	end,
+-- 	handlers = {
+-- 		-- Custom handler to parse eslint_d output
+-- 		["textDocument/publishDiagnostics"] = function(_, result, ctx, config)
+-- 			-- You can customize how diagnostics are displayed here
+-- 			vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
+-- 		end,
+-- 	},
+-- 	on_attach = function(client, bufnr)
+-- 		-- Disable semantic tokens as ESLint doesn't provide them
+-- 		client.server_capabilities.semanticTokensProvider = nil
+--
+-- 		-- Create a command for ESLint fixing
+-- 		vim.api.nvim_buf_create_user_command(bufnr, "EslintFixAll", function()
+-- 			vim.lsp.buf.code_action({
+-- 				filter = function(action)
+-- 					return action.title == "Fix all auto-fixable problems"
+-- 				end,
+-- 				apply = true,
+-- 			})
+-- 		end, {})
+--
+-- 		-- Optional: Auto-fix on save
+-- 		vim.api.nvim_create_autocmd("BufWritePre", {
+-- 			buffer = bufnr,
+-- 			callback = function()
+-- 				vim.cmd("EslintFixAll")
+-- 			end,
+-- 		})
+-- 	end,
+-- }
+
+-- Enable eslint_d
+-- vim.lsp.enable("eslint_d")
+
 vim.lsp.config.vtsls = {
-	filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+	cmd = { "vtsls", "--stdio" },
+	filetypes = {
+		"vue",
+		"javascript",
+		"javascriptreact",
+		"javascript.jsx",
+		"typescript",
+		"typescriptreact",
+		"typescript.tsx",
+	},
+	root_markers = {
+		"tsconfig.json",
+		"package.json",
+		"jsconfig.json",
+		".git",
+	},
 	settings = {
-		typescript = {
-			inlayHints = {
-				includeInlayParameterNameHints = "literal",
-				includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-				includeInlayFunctionParameterTypeHints = true,
-				includeInlayVariableTypeHints = false,
-				includeInlayPropertyDeclarationTypeHints = true,
-				includeInlayFunctionLikeReturnTypeHints = true,
-				includeInlayEnumMemberValueHints = true,
+		complete_function_calls = true,
+		vtsls = {
+			enableMoveToFileCodeAction = true,
+			autoUseWorkspaceTsdk = true,
+			experimental = {
+				maxInlayHintLength = 30,
+				completion = {
+					enableServerSideFuzzyMatch = true,
+				},
 			},
-			-- Enable vtsls's own code quality features
-			suggest = {
-				enabled = true,
-				includeCompletionsForModuleExports = true,
-			},
-			preferences = {
-				includeInlayParameterNameHints = "all",
-				includeInlayFunctionParameterTypeHints = true,
-			},
-		},
-		javascript = {
-			suggest = {
-				enabled = true,
-				includeCompletionsForModuleExports = true,
+			javascript = {
+				updateImportsOnFileMove = { enabled = "always" },
 			},
 		},
 	},
-	on_attach = function(client, bufnr)
-		client.server_capabilities.documentFormattingProvider = false
-		client.server_capabilities.documentRangeFormattingProvider = false
-		-- Keybindings specific to vtsls
-		vim.keymap.set(
-			"n",
-			"<leader>lo",
-			":VtsExec organize_imports<CR>",
-			{ buffer = bufnr, desc = "Organize Imports" }
-		)
-		vim.keymap.set(
-			"n",
-			"<leader>lu",
-			":VtsExec remove_unused_imports<CR>",
-			{ buffer = bufnr, desc = "Remove Unused Imports" }
-		)
-	end,
-}
-
-vim.lsp.config.eslint = {
-	settings = {
-		experimental = {
-			useFlatConfig = true,
-		},
-		-- Disable auto-fixing since we use prettier
-		codeActionOnSave = {
-			enable = false, -- Don't auto-fix on save
-			mode = "problems", -- Only fix errors, not warnings
-		},
-		format = false, -- Let prettier handle formatting
-		quiet = false, -- Show ESLint output
-		run = "onType", -- Run on type for immediate feedback
-		validate = "on",
-		workingDirectory = {
-			mode = "location",
-		},
-		-- Don't override rules here - use your .eslintrc file
-	},
-	on_attach = function(client, bufnr)
-		-- Disable ESLint's formatting capability completely
-		client.server_capabilities.documentFormattingProvider = false
-		client.server_capabilities.documentRangeFormattingProvider = false
-
-		-- Manual ESLint commands when you need them
-		vim.keymap.set("n", "<leader>le", ":EslintFixAll<CR>", { buffer = bufnr, desc = "ESLint Fix All (Manual)" })
-	end,
 }
 -- Then enable it
-vim.lsp.enable("vtsls")
+vim.lsp.enable("vtsls", true)
 -- Enable configured servers
 -- vim.lsp.enable("lua_ls")
 -- vim.lsp.enable("clangd")
@@ -114,7 +151,7 @@ vim.lsp.enable("vtsls")
 -- vim.lsp.enable("nil_ls")
 -- vim.lsp.enable("tailwindcss")
 -- vim.lsp.enable("templ")
-vim.lsp.enable("eslint")
+-- vim.lsp.enable("eslint")
 -- vim.lsp.config("eslint", {
 -- 	--- ...
 -- 	on_attach = function(client, bufnr)

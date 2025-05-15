@@ -120,7 +120,7 @@ rec {
       pkgs.tailwindcss-language-server
       pkgs.typescript-language-server
       pkgs.vscode-langservers-extracted
-      pkgs.nodePackages_latest.eslint_d
+      pkgs.eslint_d
       pkgs.eslint
 
       # Formatters and Linters
@@ -138,7 +138,6 @@ rec {
   mkExtraConfig = ''
     lua << EOF
       require("user")
-      vim.cmd("set runtimepath+=./ftplugin")
     EOF
   '';
 
