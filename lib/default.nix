@@ -42,6 +42,8 @@ rec {
       vimPlugins.which-key-nvim # Key binding helper
       vimPlugins.trouble-nvim
       vimPlugins.lazydev-nvim
+      vimPlugins.nvim-lint
+      vimPlugins.nvim-vtsls
       vimPlugins.mini-nvim # Collection of minimal plugins
       vimPlugins.better-escape-nvim
       vimPlugins.nvim-web-devicons
@@ -86,6 +88,10 @@ rec {
       vimPlugins.nvim-treesitter-parsers.bash
       vimPlugins.nvim-treesitter-parsers.templ
       vimPlugins.nvim-treesitter-parsers.python
+      vimPlugins.nvim-treesitter-parsers.yaml
+      vimPlugins.nvim-treesitter-parsers.toml
+      vimPlugins.nvim-treesitter-parsers.dockerfile
+      vimPlugins.nvim-treesitter-parsers.json
 
       # UI and Aesthetics
       vimPlugins.catppuccin-nvim
@@ -115,7 +121,7 @@ rec {
       pkgs.htmx-lsp
       pkgs.lua-language-server
       pkgs.nil
-      pkgs.vtsls
+      # pkgs.vtsls
       pkgs.nodejs_24
       pkgs.tailwindcss-language-server
       pkgs.typescript-language-server

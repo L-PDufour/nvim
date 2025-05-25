@@ -1,5 +1,6 @@
 require("user.options")
 require("user.autocmds")
+require("user.snacks")
 require("user.cmp")
 require("user.format")
 require("user.git")
