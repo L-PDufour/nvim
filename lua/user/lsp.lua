@@ -24,3 +24,8 @@ vim.diagnostic.config({
 vim.lsp.enable("vtsls")
 vim.lsp.enable("gopls")
 vim.lsp.enable("lua_ls")
+vim.lsp.enable("html")
+-- vim.lsp.enable("htmx")
+vim.lsp.enable("templ")
+vim.lsp.enable("nixd")
+vim.lsp.enable("tailwindcss")

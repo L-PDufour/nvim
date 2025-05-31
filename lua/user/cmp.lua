@@ -28,13 +28,23 @@ cmp.setup({
 			enabled = vim.g.ai_cmp,
 		},
 	},
+	cmdline = {
+		keymap = { preset = "inherit" },
+		completion = { menu = { auto_show = true } },
+	},
 	snippets = { preset = "luasnip" },
 	sources = {
 		default = { "lazydev", "lsp", "path", "snippets", "buffer" },
 		per_filetype = {
+			org = { "orgmode" },
 			["gitcommit"] = { "conventional", "buffer", "spell" },
 		},
 		providers = {
+			orgmode = {
+				name = "Orgmode",
+				module = "orgmode.org.autocompletion.blink",
+				fallbacks = { "buffer" },
+			},
 			lazydev = {
 				name = "LazyDev",
 				module = "lazydev.integrations.blink",
