@@ -101,6 +101,14 @@ rec {
       vimPlugins.orgmode
       vimPlugins.headlines-nvim
 
+      # AI
+      vimPlugins.codecompanion-nvim
+
+      # Debugger
+      vimPlugins.nvim-dap
+      vimPlugins.nvim-dap-ui
+      vimPlugins.nvim-dap-go
+      vimPlugins.nvim-dap-vscode-js
       # User config
       user-nvim
 
@@ -116,29 +124,11 @@ rec {
       };
     in
     [
-      # Language Servers
-      pkgs.gopls
-      pkgs.htmx-lsp
-      pkgs.lua-language-server
-      pkgs.nil
-      # pkgs.vtsls
       pkgs.nodejs_24
-      pkgs.tailwindcss-language-server
-      pkgs.typescript-language-server
-      pkgs.vscode-langservers-extracted
-      pkgs.eslint_d
-      pkgs.eslint
-
-      # Formatters and Linters
-      pkgs.nixfmt-rfc-style
-      pkgs.nodePackages_latest.prettier
-      pkgs.prettierd
-      pkgs.stylua
-
-      # Tools
       pkgs.python3
       pkgs.ripgrep
-      pkgs.templ
+      pkgs.delve
+      pkgs.vscode-js-debug
     ];
 
   mkExtraConfig = ''
