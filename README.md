@@ -1,1 +1,1 @@
-nix run "github:L-PDufour/nvim?ref=nix#neovim"
+nix run "github:L-PDufour/nvim#neovim"
