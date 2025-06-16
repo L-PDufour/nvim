@@ -21,10 +21,12 @@ vim.diagnostic.config({
 })
 
 -- Then enable the servers
-vim.lsp.enable("vtsls")
+-- vim.lsp.enable("vtsls")
 vim.lsp.enable("gopls")
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("html")
+vim.lsp.enable("denolsp")
+vim.lsp.enable("pyright")
 -- vim.lsp.enable("htmx")
 vim.lsp.enable("templ")
 vim.lsp.enable("nixd")

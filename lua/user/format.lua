@@ -3,11 +3,11 @@ conform.setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
 		nix = { "nixfmt" },
-		typescript = { "prettierd", "prettier" },
-		typescriptreact = { "prettierd", "prettier", stop_after_first = true },
-		javascript = { "prettierd", "prettier", stop_after_first = true },
-		javascriptreact = { "prettierd", "prettier", stop_after_first = true },
-		json = { "prettierd", "prettier", stop_after_first = true },
+		-- typescript = { "prettierd", "prettier" },
+		-- typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+		-- javascript = { "prettierd", "prettier", stop_after_first = true },
+		-- javascriptreact = { "prettierd", "prettier", stop_after_first = true },
+		-- json = { "prettierd", "prettier", stop_after_first = true },
 		html = { "prettierd", "prettier", stop_after_first = true },
 		css = { "prettierd", "prettier", stop_after_first = true },
 		templ = { "templ" },
@@ -22,10 +22,10 @@ local lint = require("lint")
 
 -- Configure linters by filetype
 lint.linters_by_ft = {
-	javascript = { "eslint_d" },
-	javascriptreact = { "eslint_d" },
-	typescript = { "eslint_d" },
-	typescriptreact = { "eslint_d" },
+	-- javascript = { "eslint_d" },
+	-- javascriptreact = { "eslint_d" },
+	-- typescript = { "eslint_d" },
+	-- typescriptreact = { "eslint_d" },
 	-- markdown = { "vale" }, -- If you have vale installed
 	-- You can add more linters here
 	-- python = {'pylint', 'mypy'},
@@ -43,7 +43,7 @@ vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
 	end,
 })
 
-lint.linters.eslint_d = require("lint.linters.eslint_d")
+-- lint.linters.eslint_d = require("lint.linters.eslint_d")
 -- You can customize the linter if needed:
 -- lint.linters.eslint_d.args = {
 --   '--no-warn-ignored',
