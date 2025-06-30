@@ -1,25 +1,25 @@
 local api_key_cache = nil
 
 require("codecompanion").setup({
-  adapters = {
-    anthropic = function()
-      return require("codecompanion.adapters").extend("anthropic", {
-        env = {
-          api_key = function()
-            if not api_key_cache then
-              api_key_cache = vim.fn.inputsecret("Enter Claude API key: ")
-            end
-            return api_key_cache
-          end,
-        },
-      })
-    end,
-  },
-  strategies = {
-    chat = { adapter = "anthropic" },
-    inline = { adapter = "anthropic" },
-    cmd = { adapter = "anthropic" }
-  },
+	adapters = {
+		anthropic = function()
+			return require("codecompanion.adapters").extend("anthropic", {
+				env = {
+					api_key = function()
+						if not api_key_cache then
+							api_key_cache = vim.fn.inputsecret("Enter Claude API key: ")
+						end
+						return api_key_cache
+					end,
+				},
+			})
+		end,
+	},
+	strategies = {
+		chat = { adapter = "anthropic" },
+		inline = { adapter = "anthropic" },
+		cmd = { adapter = "anthropic" },
+	},
 })
 
 vim.keymap.set({ "n", "v" }, "<C-a>", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true })
