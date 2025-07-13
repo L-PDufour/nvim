@@ -16,14 +16,19 @@ require("lazy").setup({
 	-- LSP and Completion
 	{
 		"saghen/blink.cmp",
-		dependencies = "rafamadriz/friendly-snippets",
+		dependencies = {
+			"rafamadriz/friendly-snippets",
+			{
+				"mikavilpas/blink-ripgrep.nvim",
+				version = "*", -- use the latest stable version
+			},
+		},
 		version = "1.*",
 	},
-	{ "altermo/ultimate-autopair.nvim" }, -- alternative to blink-pairs
-	{ "davidsierradz/cmp-conventionalcommits" }, -- alternative to blink-cmp-conventional-commits
-	{ "mikavilpas/blink-ripgrep.nvim" },
-	{ "L3MON4D3/LuaSnip" },
-	{ "rafamadriz/friendly-snippets" },
+	{
+		"L3MON4D3/LuaSnip",
+		dependencies = { "rafamadriz/friendly-snippets" },
+	},
 	{ "stevearc/conform.nvim" },
 
 	-- Navigation and Search
@@ -81,8 +86,19 @@ require("lazy").setup({
 	-- 		require("vectorcode").setup()
 	-- 	end,
 	-- },
-	{ "olimorris/codecompanion.nvim", dependencies = { "Davidyz/VectorCode" } },
-
+	{ "olimorris/codecompanion.nvim" },
+	{
+		"ravitemer/mcphub.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		build = "bundled_build.lua", -- Bundles `mcp-hub` binary along with the neovim plugin
+		config = function()
+			require("mcphub").setup({
+				use_bundled_binary = true, -- Use local `mcp-hub` binary
+			})
+		end,
+	},
 	-- Debugger
 	{ "mfussenegger/nvim-dap" },
 	{

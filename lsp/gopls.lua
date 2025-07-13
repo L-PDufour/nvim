@@ -1,83 +1,99 @@
--- lsp/gopls.lua
+---@brief
+---
+--- https://github.com/golang/tools/tree/master/gopls
+---
+--- Google's lsp server for golang.
+
+--- @class go_dir_custom_args
+---
+--- @field envvar_id string
+---
+--- @field custom_subdir string?
+
+local mod_cache = nil
+local std_lib = nil
+
+---@param custom_args go_dir_custom_args
+---@param on_complete fun(dir: string | nil)
+local function identify_go_dir(custom_args, on_complete)
+	local cmd = { "go", "env", custom_args.envvar_id }
+	vim.system(cmd, { text = true }, function(output)
+		local res = vim.trim(output.stdout or "")
+		if output.code == 0 and res ~= "" then
+			if custom_args.custom_subdir and custom_args.custom_subdir ~= "" then
+				res = res .. custom_args.custom_subdir
+			end
+			on_complete(res)
+		else
+			vim.schedule(function()
+				vim.notify(
+					("[gopls] identify " .. custom_args.envvar_id .. " dir cmd failed with code %d: %s\n%s"):format(
+						output.code,
+						vim.inspect(cmd),
+						output.stderr
+					)
+				)
+			end)
+			on_complete(nil)
+		end
+	end)
+end
+
+---@return string?
+local function get_std_lib_dir()
+	if std_lib and std_lib ~= "" then
+		return std_lib
+	end
+
+	identify_go_dir({ envvar_id = "GOROOT", custom_subdir = "/src" }, function(dir)
+		if dir then
+			std_lib = dir
+		end
+	end)
+	return std_lib
+end
+
+---@return string?
+local function get_mod_cache_dir()
+	if mod_cache and mod_cache ~= "" then
+		return mod_cache
+	end
+
+	identify_go_dir({ envvar_id = "GOMODCACHE" }, function(dir)
+		if dir then
+			mod_cache = dir
+		end
+	end)
+	return mod_cache
+end
+
+---@param fname string
+---@return string?
+local function get_root_dir(fname)
+	if mod_cache and fname:sub(1, #mod_cache) == mod_cache then
+		local clients = vim.lsp.get_clients({ name = "gopls" })
+		if #clients > 0 then
+			return clients[#clients].config.root_dir
+		end
+	end
+	if std_lib and fname:sub(1, #std_lib) == std_lib then
+		local clients = vim.lsp.get_clients({ name = "gopls" })
+		if #clients > 0 then
+			return clients[#clients].config.root_dir
+		end
+	end
+	return vim.fs.root(fname, "go.work") or vim.fs.root(fname, "go.mod") or vim.fs.root(fname, ".git")
+end
+
+---@type vim.lsp.Config
 return {
 	cmd = { "gopls" },
 	filetypes = { "go", "gomod", "gowork", "gotmpl" },
-	root_dir = function(bufnr, cb)
-		local fname = vim.uri_to_fname(vim.uri_from_bufnr(bufnr))
-
-		-- Look for Go module files
-		local go_roots = {
-			"go.mod",
-			"go.work",
-			".git",
-		}
-
-		local go_root = vim.fs.find(go_roots, { upward = true, path = fname })[1]
-		if go_root then
-			cb(vim.fn.fnamemodify(go_root, ":h"))
-		else
-			-- Fallback to the directory containing the file
-			cb(vim.fn.fnamemodify(fname, ":h"))
-		end
+	root_dir = function(bufnr, on_dir)
+		local fname = vim.api.nvim_buf_get_name(bufnr)
+		get_mod_cache_dir()
+		get_std_lib_dir()
+		-- see: https://github.com/neovim/nvim-lspconfig/issues/804
+		on_dir(get_root_dir(fname))
 	end,
-	single_file_support = true,
-	settings = {
-		gopls = {
-			completeUnimported = true,
-			usePlaceholders = true,
-			deepCompletion = true,
-			completeFunctionCalls = true,
-			matcher = "Fuzzy",
-			experimentalPostfixCompletions = true,
-
-			-- Inlay hints
-			hints = {
-				assignVariableTypes = true,
-				compositeLiteralFields = true,
-				compositeLiteralTypes = true,
-				constantValues = true,
-				functionTypeParameters = true,
-				parameterNames = true,
-				rangeVariableTypes = true,
-			},
-
-			-- Formatting
-			gofumpt = true,
-
-			-- Semantic tokens
-			semanticTokens = true,
-
-			-- Static analysis
-			staticcheck = true,
-
-			-- Vulnerability checking
-			vulncheck = "Imports", -- Enable vulnerability scanning
-
-			-- Documentation
-			hoverKind = "FullDocumentation",
-			linkTarget = "pkg.go.dev",
-			linksInHover = true,
-
-			-- Navigation
-			importShortcut = "Both",
-			symbolMatcher = "FastFuzzy",
-			symbolStyle = "Dynamic",
-			symbolScope = "all",
-
-			-- Performance settings
-			completionBudget = "100ms",
-			diagnosticsDelay = "500ms", -- Faster than default 1s
-			diagnosticsTrigger = "Edit",
-			analysisProgressReporting = true,
-
-			-- Directory filters (exclude common build artifacts)
-			directoryFilters = {
-				"-**/node_modules",
-				"-**/vendor",
-				"-**/.git",
-				"-**/dist",
-				"-**/build",
-			},
-		},
-	},
 }
