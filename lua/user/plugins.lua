@@ -81,7 +81,7 @@ require("lazy").setup({
 	-- 		require("vectorcode").setup()
 	-- 	end,
 	-- },
-	{ "olimorris/codecompanion.nvim", dependencies = { "Davidyz/VectorCode" } },
+	{ "olimorris/codecompanion.nvim" },
 
 	-- Debugger
 	{ "mfussenegger/nvim-dap" },
