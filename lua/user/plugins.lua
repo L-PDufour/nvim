@@ -53,7 +53,7 @@ require("lazy").setup({
 				ensure_installed = "all", -- equivalent to withAllGrammars
 				sync_install = false,
 				auto_install = true,
-				ignore_install = { "org", "ipkg" },
+				ignore_install = { "org", "ipkg", "norg" },
 				highlight = { enable = true },
 				incremental_selection = { enable = true },
 				indent = { enable = false },
@@ -81,7 +81,7 @@ require("lazy").setup({
 	-- 		require("vectorcode").setup()
 	-- 	end,
 	-- },
-	{ "olimorris/codecompanion.nvim", dependencies = { "Davidyz/VectorCode" } },
+	{ "olimorris/codecompanion.nvim" },
 
 	-- Debugger
 	{ "mfussenegger/nvim-dap" },
