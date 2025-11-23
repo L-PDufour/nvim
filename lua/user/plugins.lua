@@ -1,21 +1,37 @@
 -- lazy.nvim plugin configuration adapted from your Nix setup
 require("lazy").setup({
 	-- Core dependencies
-	{ "nvim-lua/plenary.nvim" },
-	{ "folke/which-key.nvim" },
-	{ "folke/trouble.nvim" },
-	{ "folke/lazydev.nvim" },
-	{ "mfussenegger/nvim-lint" },
-	{ "yioneko/nvim-vtsls" },
+	{ "nvim-lua/plenary.nvim", lazy = true },
+	{ "nvim-tree/nvim-web-devicons", lazy = true },
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+	},
+	{
+		"folke/trouble.nvim",
+		cmd = { "Trouble" },
+	},
+	{
+		"folke/lazydev.nvim",
+		ft = "lua",
+	},
+	{
+		"mfussenegger/nvim-lint",
+		event = { "BufReadPre", "BufNewFile" },
+	},
 	{ "echasnovski/mini.nvim" },
-	{ "max397574/better-escape.nvim" },
 	{ "nvim-tree/nvim-web-devicons" },
-	{ "folke/snacks.nvim" },
-	{ "folke/flash.nvim" },
+	{
+		"folke/snacks.nvim",
+		priority = 1000,
+		lazy = false,
+	},
+	{ "folke/flash.nvim", event = "VeryLazy" },
 
 	-- LSP and Completion
 	{
 		"saghen/blink.cmp",
+		event = "InsertEnter",
 		dependencies = {
 			"rafamadriz/friendly-snippets",
 			{
@@ -27,9 +43,10 @@ require("lazy").setup({
 	},
 	{
 		"L3MON4D3/LuaSnip",
+		event = "InsertEnter",
 		dependencies = { "rafamadriz/friendly-snippets" },
 	},
-	{ "stevearc/conform.nvim" },
+	{ "stevearc/conform.nvim", event = { "BufWritePre" }, cmd = { "ConformInfo" } },
 
 	-- Navigation and Search
 	{
@@ -39,8 +56,8 @@ require("lazy").setup({
 	},
 
 	-- Git Integration
-	{ "lewis6991/gitsigns.nvim" },
-	{ "sindrets/diffview.nvim" },
+	{ "lewis6991/gitsigns.nvim", event = { "BufReadPre", "BufNewFile" } },
+	{ "sindrets/diffview.nvim", cmd = { "DiffviewOpen", "DiffviewFileHistory" } },
 
 	-- UI and Aesthetics
 	{
@@ -55,7 +72,8 @@ require("lazy").setup({
 		build = ":TSUpdate",
 		config = function()
 			require("nvim-treesitter.configs").setup({
-				ensure_installed = "all", -- equivalent to withAllGrammars
+				modules = {},
+				ensure_installed = "all",
 				sync_install = false,
 				auto_install = true,
 				ignore_install = { "org", "ipkg" },
@@ -66,10 +84,9 @@ require("lazy").setup({
 		end,
 	},
 	{
-		"nvim-treesitter/nvim-treesitter-textobjects",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		"windwp/nvim-ts-autotag",
+		opts = {},
 	},
-	-- Productivity Tools
 	{ "mbbill/undotree" },
 	{
 		"nvim-orgmode/orgmode",
@@ -114,10 +131,7 @@ require("lazy").setup({
 		dependencies = { "mfussenegger/nvim-dap" },
 	},
 }, {
-	-- Lazy.nvim configuration options
-	defaults = {
-		lazy = false, -- don't lazy load by default (similar to Nix behavior)
-	},
+
 	install = {
 		missing = true, -- install missing plugins on startup
 	},

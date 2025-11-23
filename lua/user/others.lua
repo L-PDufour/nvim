@@ -88,7 +88,6 @@ vim.keymap.set("n", "<C-p>", function()
 		pcall(vim.cmd.cprev)
 	end
 end, { desc = "Previous Trouble/Quickfix Item" })
-require("better_escape").setup()
 require("which-key").setup({
 	plugins = {
 		marks = true,
