@@ -1,6 +1,5 @@
 local conform = require("conform")
 
--- Helper function to detect if current project uses Deno
 local function is_deno_project()
 	local deno_files = { "deno.json", "deno.jsonc", "mod.ts", "deps.ts" }
 	for _, file in ipairs(deno_files) do
