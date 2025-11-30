@@ -16,7 +16,7 @@ vim.o.winborder = "rounded"
 vim.o.updatetime = 100 -- Faster completion
 
 vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
+	vim.o.clipboard = "unnamedplus"
 end)
 -- Line numbers
 vim.o.number = true -- Display the absolute line number of the current line
@@ -155,8 +155,8 @@ vim.keymap.set("c", "<C-k>", '<C-\\>e("\\<C-E>\\<C-U>")<CR>', { noremap = true }
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 vim.keymap.set("n", "<leader>xq", function()
-  local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen)
-  if not success and err then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
+	local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen)
+	if not success and err then
+		vim.notify(err, vim.log.levels.ERROR)
+	end
 end, { desc = "Quickfix List" })
