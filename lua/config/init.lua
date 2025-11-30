@@ -1,0 +1,7 @@
+require("config.options")
+require("config.keymaps")
+require("config.autocmds")
+require("config.mini")
+require("config.lsp")
+require("config.org")
+require("config.cmp")

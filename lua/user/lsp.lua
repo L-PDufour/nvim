@@ -1,8 +1,4 @@
 -- Set up LSP in lua/user/lsp.lua for Neovim 0.11+
-vim.lsp.config("*", {
-	capabilities = require("blink.cmp").get_lsp_capabilities(),
-})
-
 -- Configure diagnostics globally
 vim.diagnostic.config({
 	virtual_text = {
