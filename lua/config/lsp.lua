@@ -1,3 +1,24 @@
+vim.lsp.enable({ "lua_ls", "gopls", "html", "denolsp", "pyright", "templ", "clangd", "nixd", "tailwindcss" })
+local diagnostic_opts = {
+	-- Show signs on top of any other sign, but only for warnings and errors
+	signs = { priority = 9999, severity = { min = "WARN", max = "ERROR" } },
+
+	-- Show all diagnostics as underline (for their messages type `<Leader>ld`)
+	underline = { severity = { min = "HINT", max = "ERROR" } },
+
+	-- Show more details immediately for errors on the current line
+	virtual_lines = false,
+	virtual_text = {
+		current_line = true,
+		severity = { min = "ERROR", max = "ERROR" },
+	},
+
+	-- Don't update diagnostics when typing
+	update_in_insert = false,
+}
+
+-- Use `later()` to avoid sourcing `vim.diagnostic` on startup
+vim.diagnostic.config(diagnostic_opts)
 local conform = require("conform")
 
 local function is_deno_project()
@@ -108,3 +129,7 @@ vim.api.nvim_create_user_command("ToggleDeno", function()
 		print("Node.js project detected in: " .. current_dir)
 	end
 end, { desc = "Check current project type" })
+
+vim.lsp.config("*", {
+	capabilities = require("blink.cmp").get_lsp_capabilities(),
+})

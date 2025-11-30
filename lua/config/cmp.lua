@@ -2,9 +2,15 @@ local cmp = require("blink.cmp")
 local lazydev = require("lazydev")
 
 lazydev.setup({ ft = "lua" })
-require("luasnip.loaders.from_vscode").lazy_load()
 cmp.setup({
-	keymap = { preset = "super-tab" },
+	keymap = {
+		preset = "super-tab",
+		["<c-g>"] = {
+			function()
+				require("blink-cmp").show({ providers = { "ripgrep" } })
+			end,
+		},
+	},
 	appearance = {
 		use_nvim_cmp_as_default = false,
 		nerd_font_variant = "mono",
@@ -28,9 +34,9 @@ cmp.setup({
 		keymap = { preset = "inherit" },
 		completion = { menu = { auto_show = true } },
 	},
-	snippets = { preset = "luasnip" },
+	snippets = { preset = "mini_snippets" },
 	sources = {
-		default = { "lazydev", "lsp", "path", "snippets", "buffer", "ripgrep" },
+		default = { "lazydev", "lsp", "path", "snippets", "buffer" },
 		per_filetype = {
 			org = { "orgmode" },
 			["gitcommit"] = { "conventional", "buffer", "spell" },
@@ -54,7 +60,6 @@ cmp.setup({
 				---@module "blink-ripgrep"
 				---@type blink-ripgrep.Options
 				opts = {
-					prefix_min_len = 4,
 					backend = {
 						-- The backend to use for searching. Defaults to "ripgrep".
 						-- Available options:
@@ -68,6 +73,7 @@ cmp.setup({
 			},
 		},
 	},
+
 	fuzzy = { implementation = "prefer_rust_with_warning" },
 	-- experimental signature help support
 	signature = { enabled = true },
