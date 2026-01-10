@@ -204,6 +204,41 @@ nmap_leader("vv", '<Cmd>lua MiniVisits.add_label("core")<CR>', 'Add "core" label
 nmap_leader("vV", '<Cmd>lua MiniVisits.remove_label("core")<CR>', 'Remove "core" label')
 nmap_leader("vl", "<Cmd>lua MiniVisits.add_label()<CR>", "Add label")
 nmap_leader("vL", "<Cmd>lua MiniVisits.remove_label()<CR>", "Remove label")
+
+-- d is for 'Debug' (DAP). Common usage:
+-- - `<Leader>db` - toggle breakpoint
+-- - `<Leader>dc` - continue/start debugging
+-- - `<Leader>dt` - terminate debugging session
+-- - Function keys: F5 (continue), F10 (step over), F11 (step into), F12 (step out)
+nmap_leader("db", "<Cmd>lua require('dap').toggle_breakpoint()<CR>", "Toggle breakpoint")
+nmap_leader("dB", function()
+	require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
+end, "Conditional breakpoint")
+nmap_leader("dc", "<Cmd>lua require('dap').continue()<CR>", "Continue/Start")
+nmap_leader("di", "<Cmd>lua require('dap').step_into()<CR>", "Step into")
+nmap_leader("do", "<Cmd>lua require('dap').step_over()<CR>", "Step over")
+nmap_leader("dO", "<Cmd>lua require('dap').step_out()<CR>", "Step out")
+nmap_leader("dr", "<Cmd>lua require('dap').repl.toggle()<CR>", "Toggle REPL")
+nmap_leader("dl", "<Cmd>lua require('dap').run_last()<CR>", "Run last")
+nmap_leader("dt", "<Cmd>lua require('dap').terminate()<CR>", "Terminate")
+nmap_leader("du", "<Cmd>lua require('dapui').toggle()<CR>", "Toggle UI")
+nmap_leader("dh", "<Cmd>lua require('dap.ui.widgets').hover()<CR>", "Hover variables")
+nmap_leader("dp", "<Cmd>lua require('dap.ui.widgets').preview()<CR>", "Preview")
+nmap_leader("df", function()
+	local widgets = require("dap.ui.widgets")
+	widgets.centered_float(widgets.frames)
+end, "Frames")
+nmap_leader("ds", function()
+	local widgets = require("dap.ui.widgets")
+	widgets.centered_float(widgets.scopes)
+end, "Scopes")
+
+-- Function key mappings for debugging (standard IDE shortcuts)
+map("n", "<F5>", "<Cmd>lua require('dap').continue()<CR>", { desc = "Debug: Continue" })
+map("n", "<F10>", "<Cmd>lua require('dap').step_over()<CR>", { desc = "Debug: Step Over" })
+map("n", "<F11>", "<Cmd>lua require('dap').step_into()<CR>", { desc = "Debug: Step Into" })
+map("n", "<F12>", "<Cmd>lua require('dap').step_out()<CR>", { desc = "Debug: Step Out" })
+
 -- stylua: ignore end
 -- Override the mappings after setup
 vim.keymap.set("n", ";", ":", { noremap = true, desc = "Enter command mode" })

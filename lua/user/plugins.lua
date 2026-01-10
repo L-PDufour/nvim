@@ -130,6 +130,14 @@ require("lazy").setup({
 		"mxsdev/nvim-dap-vscode-js",
 		dependencies = { "mfussenegger/nvim-dap" },
 	},
+	{
+		"mfussenegger/nvim-dap-python",
+		dependencies = { "mfussenegger/nvim-dap" },
+	},
+	{
+		"theHamsta/nvim-dap-virtual-text",
+		dependencies = { "mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter" },
+	},
 }, {
 
 	install = {
