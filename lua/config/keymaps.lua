@@ -79,60 +79,77 @@ nmap_leader("eo", edit_plugin_file("10_options.lua"), "Options config")
 nmap_leader("ep", edit_plugin_file("40_plugins.lua"), "Plugins config")
 nmap_leader("eq", explore_quickfix, "Quickfix")
 
--- f is for 'Fuzzy Find'. Common usage:
--- - `<Leader>ff` - find files; for best performance requires `ripgrep`
--- - `<Leader>fg` - find inside files; requires `ripgrep`
--- - `<Leader>fh` - find help tag
+-- f is for 'Find' (files and related). Common usage:
+-- - `<Leader>f`  - find files (most common, shortest!)
+-- - `<Leader>fh` - find help tags
 -- - `<Leader>fr` - resume latest picker
--- - `<Leader>fv` - all visited paths; requires 'mini.visits'
+-- - `<Leader>fj` - find visited paths
 --
 -- All these use 'mini.pick'. See `:h MiniPick-overview` for an overview.
-local pick_added_hunks_buf = '<Cmd>Pick git_hunks path="%" scope="staged"<CR>'
 local pick_workspace_symbols_live = '<Cmd>Pick lsp scope="workspace_symbol_live"<CR>'
 
-nmap_leader("f/", '<Cmd>Pick history scope="/"<CR>', '"/" history')
-nmap_leader("f:", '<Cmd>Pick history scope=":"<CR>', '":" history')
-nmap_leader("fa", '<Cmd>Pick git_hunks scope="staged"<CR>', "Added hunks (all)")
-nmap_leader("fA", pick_added_hunks_buf, "Added hunks (buf)")
-nmap_leader("fb", "<Cmd>Pick buffers<CR>", "Buffers")
-nmap_leader("fc", "<Cmd>Pick git_commits<CR>", "Commits (all)")
-nmap_leader("fC", '<Cmd>Pick git_commits path="%"<CR>', "Commits (buf)")
-nmap_leader("fd", '<Cmd>Pick diagnostic scope="all"<CR>', "Diagnostic workspace")
-nmap_leader("fD", '<Cmd>Pick diagnostic scope="current"<CR>', "Diagnostic buffer")
 nmap_leader("ff", "<Cmd>Pick files<CR>", "Files")
-nmap_leader("fg", "<Cmd>Pick grep_live<CR>", "Grep live")
-nmap_leader("fG", '<Cmd>Pick grep pattern="<cword>"<CR>', "Grep current word")
+nmap_leader("fd", '<Cmd>Pick diagnostic scope="all"<CR>', "Diagnostics workspace")
+nmap_leader("ft", '<Cmd>Pick diagnostic scope="current"<CR>', "Diagnostics buffer")
+nmap_leader("fs", '<Cmd>Pick lsp scope="document_symbol"<CR>', "Symbols document")
+nmap_leader("fw", pick_workspace_symbols_live, "Symbols workspace")
 nmap_leader("fh", "<Cmd>Pick help<CR>", "Help tags")
-nmap_leader("fH", "<Cmd>Pick hl_groups<CR>", "Highlight groups")
-nmap_leader("fl", '<Cmd>Pick buf_lines scope="all"<CR>', "Lines (all)")
-nmap_leader("fL", '<Cmd>Pick buf_lines scope="current"<CR>', "Lines (buf)")
-nmap_leader("fm", "<Cmd>Pick git_hunks<CR>", "Modified hunks (all)")
-nmap_leader("fM", '<Cmd>Pick git_hunks path="%"<CR>', "Modified hunks (buf)")
+nmap_leader("fp", "<Cmd>Pick hl_groups<CR>", "Highlight groups")
+nmap_leader("fj", '<Cmd>Pick visit_paths cwd=""<CR>', "Visits (all)")
+nmap_leader("fk", "<Cmd>Pick visit_paths<CR>", "Visits (cwd)")
 nmap_leader("fr", "<Cmd>Pick resume<CR>", "Resume")
-nmap_leader("fR", '<Cmd>Pick lsp scope="references"<CR>', "References (LSP)")
-nmap_leader("fs", pick_workspace_symbols_live, "Symbols workspace (live)")
-nmap_leader("fS", '<Cmd>Pick lsp scope="document_symbol"<CR>', "Symbols document")
-nmap_leader("fv", '<Cmd>Pick visit_paths cwd=""<CR>', "Visit paths (all)")
-nmap_leader("fV", "<Cmd>Pick visit_paths<CR>", "Visit paths (cwd)")
+nmap_leader("fn", '<Cmd>Pick lsp scope="references"<CR>', "refereNces (LSP)")
+
+-- j is for 'Jump/Search'. Common usage:
+-- - `<Leader>j`  - grep live (most common search!)
+-- - `<Leader>jw` - grep word under cursor
+-- - `<Leader>jl` - search lines in all buffers
+-- - `<Leader>jk` - search lines in current buffer
+nmap_leader("jj", "<Cmd>Pick grep_live<CR>", "Grep live")
+nmap_leader("jw", '<Cmd>Pick grep pattern="<cword>"<CR>', "Grep word")
+nmap_leader("jl", '<Cmd>Pick buf_lines scope="all"<CR>', "Lines (all)")
+nmap_leader("jk", '<Cmd>Pick buf_lines scope="current"<CR>', "Lines (buffer)")
+nmap_leader("j/", '<Cmd>Pick history scope="/"<CR>', '"/" history')
+nmap_leader("j:", '<Cmd>Pick history scope=":"<CR>', '":" history')
+
+-- k is for 'Buffers' (k is home row, easy to reach)
+nmap_leader("k", "<Cmd>Pick buffers<CR>", "Buffers")
 
 -- g is for 'Git'. Common usage:
 -- - `<Leader>gs` - show information at cursor
 -- - `<Leader>go` - toggle 'mini.diff' overlay to show in-buffer unstaged changes
 -- - `<Leader>gd` - show unstaged changes as a patch in separate tabpage
--- - `<Leader>gL` - show Git log of current file
+-- - `<Leader>gf` - commits all files
+-- - `<Leader>gj` - commits current file
+-- - `<Leader>gh` - modified hunks all
+-- - `<Leader>gk` - modified hunks current
 local git_log_cmd = [[Git log --pretty=format:\%h\ \%as\ │\ \%s --topo-order]]
 local git_log_buf_cmd = git_log_cmd .. " --follow -- %"
 
-nmap_leader("ga", "<Cmd>Git diff --cached<CR>", "Added diff")
-nmap_leader("gA", "<Cmd>Git diff --cached -- %<CR>", "Added diff buffer")
 nmap_leader("gc", "<Cmd>Git commit<CR>", "Commit")
-nmap_leader("gC", "<Cmd>Git commit --amend<CR>", "Commit amend")
+nmap_leader("ga", "<Cmd>Git commit --amend<CR>", "Commit amend")
 nmap_leader("gd", "<Cmd>Git diff<CR>", "Diff")
-nmap_leader("gD", "<Cmd>Git diff -- %<CR>", "Diff buffer")
-nmap_leader("gl", "<Cmd>" .. git_log_cmd .. "<CR>", "Log")
-nmap_leader("gL", "<Cmd>" .. git_log_buf_cmd .. "<CR>", "Log buffer")
-nmap_leader("go", "<Cmd>lua MiniDiff.toggle_overlay()<CR>", "Toggle overlay")
+nmap_leader("gt", "<Cmd>Git diff -- %<CR>", "Diff this buffer")
 nmap_leader("gs", "<Cmd>lua MiniGit.show_at_cursor()<CR>", "Show at cursor")
+nmap_leader("go", "<Cmd>lua MiniDiff.toggle_overlay()<CR>", "Toggle overlay")
+
+-- Git hunks (using mini.pick)
+nmap_leader("gh", "<Cmd>Pick git_hunks<CR>", "Hunks modified (all)")
+nmap_leader("gk", '<Cmd>Pick git_hunks path="%"<CR>', "Hunks modified (buffer)")
+nmap_leader("gl", '<Cmd>Pick git_hunks scope="staged"<CR>', "Hunks staged (all)")
+nmap_leader("g;", '<Cmd>Pick git_hunks path="%" scope="staged"<CR>', "Hunks staged (buffer)")
+
+-- Git commits (using mini.pick)
+nmap_leader("gf", "<Cmd>Pick git_commits<CR>", "Commits (all)")
+nmap_leader("gj", '<Cmd>Pick git_commits path="%"<CR>', "Commits (buffer)")
+
+-- Git log (using mini.git)
+nmap_leader("gn", "<Cmd>" .. git_log_cmd .. "<CR>", "Log (all)")
+nmap_leader("gm", "<Cmd>" .. git_log_buf_cmd .. "<CR>", "Log (buffer)")
+
+-- Git staged diff
+nmap_leader("gp", "<Cmd>Git diff --cached<CR>", "Staged diff (all)")
+nmap_leader("gu", "<Cmd>Git diff --cached -- %<CR>", "Staged diff (buffer)")
 
 xmap_leader("gs", "<Cmd>lua MiniGit.show_at_cursor()<CR>", "Show at selection")
 
@@ -172,17 +189,6 @@ nmap_leader("mt", "<Cmd>lua MiniMap.toggle()<CR>", "Toggle")
 nmap_leader("or", "<Cmd>lua MiniMisc.resize_window()<CR>", "Resize to default width")
 nmap_leader("ot", "<Cmd>lua MiniTrailspace.trim()<CR>", "Trim trailspace")
 nmap_leader("oz", "<Cmd>lua MiniMisc.zoom()<CR>", "Zoom toggle")
-
--- s is for 'Session'. Common usage:
--- - `<Leader>sn` - start new session
--- - `<Leader>sr` - read previously started session
--- - `<Leader>sd` - delete previously started session
-local session_new = 'MiniSessions.write(vim.fn.input("Session name: "))'
-
-nmap_leader("sd", '<Cmd>lua MiniSessions.select("delete")<CR>', "Delete")
-nmap_leader("sn", "<Cmd>lua " .. session_new .. "<CR>", "New")
-nmap_leader("sr", '<Cmd>lua MiniSessions.select("read")<CR>', "Read")
-nmap_leader("sw", "<Cmd>lua MiniSessions.write()<CR>", "Write current")
 
 -- v is for 'Visits'. Common usage:
 -- - `<Leader>vv` - add    "core" label to current file.
