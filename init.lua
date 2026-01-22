@@ -31,3 +31,4 @@ require("config.mini") -- All mini.nvim setup
 require("config.lsp") -- LSP configuration
 require("config.cmp") -- Completion setup
 require("config.dap") -- DAP (debugger) setup
+require("config.org")

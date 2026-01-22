@@ -67,7 +67,46 @@ dapui.setup({
 		max_value_lines = 100,
 	},
 })
+dap.adapters["pwa-chrome"] = {
+	type = "server",
+	host = "localhost",
+	port = "${port}",
+	executable = {
+		command = "js-debug",
+		args = { "${port}" },
+	},
+}
 
+-- Node adapter using js-debug
+dap.adapters["pwa-node"] = {
+	type = "server",
+	host = "localhost",
+	port = "${port}",
+	executable = {
+		command = "js-debug",
+		args = { "${port}" },
+	},
+}
+
+-- Configurations for JS/TS
+for _, language in ipairs({ "javascript", "typescript", "javascriptreact", "typescriptreact" }) do
+	dap.configurations[language] = {
+		{
+			type = "pwa-chrome",
+			request = "launch",
+			name = "Launch Chrome",
+			url = "http://localhost:3000",
+			webRoot = "${workspaceFolder}",
+		},
+		{
+			type = "pwa-node",
+			request = "launch",
+			name = "Launch file",
+			program = "${file}",
+			cwd = "${workspaceFolder}",
+		},
+	}
+end
 -- ============================================================================
 -- DAP Virtual Text (shows variable values inline)
 -- ============================================================================
@@ -104,7 +143,10 @@ end
 -- Breakpoint Signs
 -- ============================================================================
 vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DapBreakpoint", linehl = "", numhl = "" })
-vim.fn.sign_define("DapBreakpointCondition", { text = "◆", texthl = "DapBreakpointCondition", linehl = "", numhl = "" })
+vim.fn.sign_define(
+	"DapBreakpointCondition",
+	{ text = "◆", texthl = "DapBreakpointCondition", linehl = "", numhl = "" }
+)
 vim.fn.sign_define("DapBreakpointRejected", { text = "○", texthl = "DapBreakpointRejected", linehl = "", numhl = "" })
 vim.fn.sign_define("DapLogPoint", { text = "◉", texthl = "DapLogPoint", linehl = "", numhl = "" })
 vim.fn.sign_define("DapStopped", { text = "→", texthl = "DapStopped", linehl = "DapStoppedLine", numhl = "" })
@@ -130,56 +172,6 @@ require("dap-go").setup({
 		build_flags = "",
 	},
 })
-
--- ============================================================================
--- TypeScript/JavaScript Debugging (using vscode-js-debug)
--- ============================================================================
-require("dap-vscode-js").setup({
-	debugger_path = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter",
-	debugger_cmd = { "js-debug-adapter" },
-	adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal", "pwa-extensionHost" },
-})
-
-for _, language in ipairs({ "typescript", "javascript", "typescriptreact", "javascriptreact" }) do
-	dap.configurations[language] = {
-		{
-			type = "pwa-node",
-			request = "launch",
-			name = "Launch file",
-			program = "${file}",
-			cwd = "${workspaceFolder}",
-		},
-		{
-			type = "pwa-node",
-			request = "attach",
-			name = "Attach",
-			processId = require("dap.utils").pick_process,
-			cwd = "${workspaceFolder}",
-		},
-		{
-			type = "pwa-node",
-			request = "launch",
-			name = "Debug Jest Tests",
-			runtimeExecutable = "node",
-			runtimeArgs = {
-				"./node_modules/jest/bin/jest.js",
-				"--runInBand",
-			},
-			rootPath = "${workspaceFolder}",
-			cwd = "${workspaceFolder}",
-			console = "integratedTerminal",
-			internalConsoleOptions = "neverOpen",
-		},
-		{
-			type = "pwa-chrome",
-			request = "launch",
-			name = "Start Chrome with \"localhost\"",
-			url = "http://localhost:3000",
-			webRoot = "${workspaceFolder}",
-			userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir",
-		},
-	}
-end
 
 -- ============================================================================
 -- C/C++ Debugging (using gdb/lldb)
@@ -321,7 +313,7 @@ dap.configurations.python = {
 		end,
 	},
 }
-
+dap.set_log_level("TRACE")
 -- ============================================================================
 -- REPL Auto-complete
 -- ============================================================================
