@@ -81,7 +81,6 @@ require("mini.align").setup()
 require("mini.comment").setup()
 
 -- Operators
-require("mini.operators").setup()
 
 -- Pairs
 require("mini.pairs").setup({ modes = { command = true } })

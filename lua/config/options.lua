@@ -35,7 +35,6 @@ opt.splitkeep = "screen"
 opt.list = true
 opt.listchars = { tab = "> ", extends = "…", precedes = "…", nbsp = "␣" }
 opt.fillchars = { eob = " ", fold = "╌" }
-opt.colorcolumn = "+1"
 
 -- Editing
 opt.expandtab = true
@@ -64,7 +63,12 @@ opt.foldlevel = 10
 opt.foldmethod = "indent"
 opt.foldnestmax = 10
 opt.foldtext = ""
-
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "<filetype>" },
+	callback = function()
+		vim.treesitter.start()
+	end,
+})
 -- Clipboard (delayed for startup performance)
 vim.schedule(function()
 	opt.clipboard = "unnamedplus"
