@@ -40,12 +40,19 @@ cmp.setup({
 		per_filetype = {
 			org = { "orgmode" },
 			["gitcommit"] = { "conventional", "buffer", "spell" },
+			sql = { "dadbod", "buffer" },
+			mysql = { "dadbod", "buffer" },
+			plsql = { "dadbod", "buffer" },
 		},
 		providers = {
 			orgmode = {
 				name = "Orgmode",
 				module = "orgmode.org.autocompletion.blink",
 				fallbacks = { "buffer" },
+			},
+			dadbod = {
+				name = "Dadbod",
+				module = "vim_dadbod_completion.blink",
 			},
 			lazydev = {
 				name = "LazyDev",

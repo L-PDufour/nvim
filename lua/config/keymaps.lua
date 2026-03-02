@@ -72,57 +72,9 @@ end
 nmap_leader("ed", "<Cmd>lua MiniFiles.open()<CR>", "Directory")
 nmap_leader("ef", explore_at_file, "File directory")
 nmap_leader("ei", "<Cmd>edit $MYVIMRC<CR>", "init.lua")
-nmap_leader("ek", edit_plugin_file("20_keymaps.lua"), "Keymaps config")
-nmap_leader("em", edit_plugin_file("30_mini.lua"), "MINI config")
 nmap_leader("en", "<Cmd>lua MiniNotify.show_history()<CR>", "Notifications")
-nmap_leader("eo", edit_plugin_file("10_options.lua"), "Options config")
-nmap_leader("ep", edit_plugin_file("40_plugins.lua"), "Plugins config")
 nmap_leader("eq", explore_quickfix, "Quickfix")
 
--- f is for 'Find' (files and related). Common usage:
--- - `<Leader>f`  - find files (most common, shortest!)
--- - `<Leader>fh` - find help tags
--- - `<Leader>fr` - resume latest picker
--- - `<Leader>fj` - find visited paths
---
--- All these use 'mini.pick'. See `:h MiniPick-overview` for an overview.
-local pick_workspace_symbols_live = '<Cmd>Pick lsp scope="workspace_symbol_live"<CR>'
-
-nmap_leader("ff", "<Cmd>Pick files<CR>", "Files")
-nmap_leader("fd", '<Cmd>Pick diagnostic scope="all"<CR>', "Diagnostics workspace")
-nmap_leader("ft", '<Cmd>Pick diagnostic scope="current"<CR>', "Diagnostics buffer")
-nmap_leader("fs", '<Cmd>Pick lsp scope="document_symbol"<CR>', "Symbols document")
-nmap_leader("fw", pick_workspace_symbols_live, "Symbols workspace")
-nmap_leader("fh", "<Cmd>Pick help<CR>", "Help tags")
-nmap_leader("fp", "<Cmd>Pick hl_groups<CR>", "Highlight groups")
-nmap_leader("fj", '<Cmd>Pick visit_paths cwd=""<CR>', "Visits (all)")
-nmap_leader("fk", "<Cmd>Pick visit_paths<CR>", "Visits (cwd)")
-nmap_leader("fr", "<Cmd>Pick resume<CR>", "Resume")
-nmap_leader("fn", '<Cmd>Pick lsp scope="references"<CR>', "refereNces (LSP)")
-
--- j is for 'Jump/Search'. Common usage:
--- - `<Leader>j`  - grep live (most common search!)
--- - `<Leader>jw` - grep word under cursor
--- - `<Leader>jl` - search lines in all buffers
--- - `<Leader>jk` - search lines in current buffer
-nmap_leader("jj", "<Cmd>Pick grep_live<CR>", "Grep live")
-nmap_leader("jw", '<Cmd>Pick grep pattern="<cword>"<CR>', "Grep word")
-nmap_leader("jl", '<Cmd>Pick buf_lines scope="all"<CR>', "Lines (all)")
-nmap_leader("jk", '<Cmd>Pick buf_lines scope="current"<CR>', "Lines (buffer)")
-nmap_leader("j/", '<Cmd>Pick history scope="/"<CR>', '"/" history')
-nmap_leader("j:", '<Cmd>Pick history scope=":"<CR>', '":" history')
-
--- k is for 'Buffers' (k is home row, easy to reach)
-nmap_leader("k", "<Cmd>Pick buffers<CR>", "Buffers")
-
--- g is for 'Git'. Common usage:
--- - `<Leader>gs` - show information at cursor
--- - `<Leader>go` - toggle 'mini.diff' overlay to show in-buffer unstaged changes
--- - `<Leader>gd` - show unstaged changes as a patch in separate tabpage
--- - `<Leader>gf` - commits all files
--- - `<Leader>gj` - commits current file
--- - `<Leader>gh` - modified hunks all
--- - `<Leader>gk` - modified hunks current
 local git_log_cmd = [[Git log --pretty=format:\%h\ \%as\ │\ \%s --topo-order]]
 local git_log_buf_cmd = git_log_cmd .. " --follow -- %"
 
@@ -153,36 +105,7 @@ nmap_leader("gu", "<Cmd>Git diff --cached -- %<CR>", "Staged diff (buffer)")
 
 xmap_leader("gs", "<Cmd>lua MiniGit.show_at_cursor()<CR>", "Show at selection")
 
--- l is for 'Language'. Common usage:
--- - `<Leader>ld` - show more diagnostic details in a floating window
--- - `<Leader>lr` - perform rename via LSP
--- - `<Leader>ls` - navigate to source definition of symbol under cursor
---
--- NOTE: most LSP mappings represent a more structured way of replacing built-in
--- LSP mappings (like `:h gra` and others). This is needed because `gr` is mapped
--- by an "replace" operator in 'mini.operators' (which is more commonly used).
-local formatting_cmd = '<Cmd>lua require("conform").format({lsp_fallback=true})<CR>'
-
-nmap_leader("la", "<Cmd>lua vim.lsp.buf.code_action()<CR>", "Actions")
-nmap_leader("ld", "<Cmd>lua vim.diagnostic.open_float()<CR>", "Diagnostic popup")
-nmap_leader("lf", formatting_cmd, "Format")
-nmap_leader("li", "<Cmd>lua vim.lsp.buf.implementation()<CR>", "Implementation")
-nmap_leader("lh", "<Cmd>lua vim.lsp.buf.hover()<CR>", "Hover")
-nmap_leader("lr", "<Cmd>lua vim.lsp.buf.rename()<CR>", "Rename")
-nmap_leader("lR", "<Cmd>lua vim.lsp.buf.references()<CR>", "References")
-nmap_leader("ls", "<Cmd>lua vim.lsp.buf.definition()<CR>", "Source definition")
-nmap_leader("lt", "<Cmd>lua vim.lsp.buf.type_definition()<CR>", "Type definition")
-
-xmap_leader("lf", formatting_cmd, "Format selection")
-
--- m is for 'Map'. Common usage:
--- - `<Leader>mt` - toggle map from 'mini.map' (closed by default)
--- - `<Leader>mf` - focus on the map for fast navigation
--- - `<Leader>ms` - change map's side (if it covers something underneath)
-nmap_leader("mf", "<Cmd>lua MiniMap.toggle_focus()<CR>", "Focus (toggle)")
-nmap_leader("mr", "<Cmd>lua MiniMap.refresh()<CR>", "Refresh")
-nmap_leader("ms", "<Cmd>lua MiniMap.toggle_side()<CR>", "Side (toggle)")
-nmap_leader("mt", "<Cmd>lua MiniMap.toggle()<CR>", "Toggle")
+-- local formatting_cmd = '<Cmd>lua require("conform").format({lsp_fallback=true})<CR>'
 
 -- o is for 'Other'. Common usage:
 -- - `<Leader>oz` - toggle between "zoomed" and regular view of current buffer
@@ -190,6 +113,7 @@ nmap_leader("or", "<Cmd>lua MiniMisc.resize_window()<CR>", "Resize to default wi
 nmap_leader("ot", "<Cmd>lua MiniTrailspace.trim()<CR>", "Trim trailspace")
 nmap_leader("oz", "<Cmd>lua MiniMisc.zoom()<CR>", "Zoom toggle")
 
+nmap_leader("ut", "<Cmd>UndotreeToggle<CR><Cmd>UndotreeFocus<CR>", "Undo tree")
 -- v is for 'Visits'. Common usage:
 -- - `<Leader>vv` - add    "core" label to current file.
 -- - `<Leader>vV` - remove "core" label to current file.
@@ -216,34 +140,26 @@ nmap_leader("vL", "<Cmd>lua MiniVisits.remove_label()<CR>", "Remove label")
 -- - `<Leader>dc` - continue/start debugging
 -- - `<Leader>dt` - terminate debugging session
 -- - Function keys: F5 (continue), F10 (step over), F11 (step into), F12 (step out)
-nmap_leader("db", "<Cmd>lua require('dap').toggle_breakpoint()<CR>", "Toggle breakpoint")
-nmap_leader("dB", function()
-	require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
-end, "Conditional breakpoint")
-nmap_leader("dc", "<Cmd>lua require('dap').continue()<CR>", "Continue/Start")
-nmap_leader("di", "<Cmd>lua require('dap').step_into()<CR>", "Step into")
-nmap_leader("do", "<Cmd>lua require('dap').step_over()<CR>", "Step over")
-nmap_leader("dO", "<Cmd>lua require('dap').step_out()<CR>", "Step out")
-nmap_leader("dr", "<Cmd>lua require('dap').repl.toggle()<CR>", "Toggle REPL")
-nmap_leader("dl", "<Cmd>lua require('dap').run_last()<CR>", "Run last")
-nmap_leader("dt", "<Cmd>lua require('dap').terminate()<CR>", "Terminate")
-nmap_leader("du", "<Cmd>lua require('dapui').toggle()<CR>", "Toggle UI")
-nmap_leader("dh", "<Cmd>lua require('dap.ui.widgets').hover()<CR>", "Hover variables")
-nmap_leader("dp", "<Cmd>lua require('dap.ui.widgets').preview()<CR>", "Preview")
-nmap_leader("df", function()
-	local widgets = require("dap.ui.widgets")
-	widgets.centered_float(widgets.frames)
-end, "Frames")
-nmap_leader("ds", function()
-	local widgets = require("dap.ui.widgets")
-	widgets.centered_float(widgets.scopes)
-end, "Scopes")
+local dap = require("dap")
+local dapui = require("dapui")
 
--- Function key mappings for debugging (standard IDE shortcuts)
-map("n", "<F5>", "<Cmd>lua require('dap').continue()<CR>", { desc = "Debug: Continue" })
-map("n", "<F10>", "<Cmd>lua require('dap').step_over()<CR>", { desc = "Debug: Step Over" })
-map("n", "<F11>", "<Cmd>lua require('dap').step_into()<CR>", { desc = "Debug: Step Into" })
-map("n", "<F12>", "<Cmd>lua require('dap').step_out()<CR>", { desc = "Debug: Step Out" })
+map("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
+map("n", "<S-F5>", dap.terminate, { desc = "Debug: Terminate" })
+map("n", "<F9>", dap.toggle_breakpoint, { desc = "Debug: Breakpoint" })
+map("n", "<S-F9>", function()
+	dap.set_breakpoint(vim.fn.input("Condition: "))
+end, { desc = "Debug: Conditional breakpoint" })
+map("n", "<F10>", dap.step_over, { desc = "Debug: Step over" })
+map("n", "<F11>", dap.step_into, { desc = "Debug: Step into" })
+map("n", "<F12>", dap.step_out, { desc = "Debug: Step out" })
+
+-- keep these on leader since they're less frequent
+nmap_leader("du", dapui.toggle, "DAP UI toggle")
+nmap_leader("de", function()
+	dapui.eval(nil, { enter = true })
+end, "DAP eval")
+nmap_leader("dt", require("dap-go").debug_test, "Debug test")
+nmap_leader("dT", require("dap-go").debug_last_test, "Debug last test")
 
 -- stylua: ignore end
 -- Override the mappings after setup

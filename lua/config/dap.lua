@@ -156,24 +156,15 @@ vim.fn.sign_define("DapStopped", { text = "→", texthl = "DapStopped", linehl =
 -- ============================================================================
 -- nvim-dap-go will handle the setup automatically
 require("dap-go").setup({
-	dap_configurations = {
-		{
-			type = "go",
-			name = "Attach remote",
-			mode = "remote",
-			request = "attach",
-		},
-	},
 	delve = {
 		path = "dlv",
 		initialize_timeout_sec = 20,
 		port = "${port}",
 		args = {},
 		build_flags = "",
+		detached = vim.fn.has("win32") == 0,
 	},
-})
-
--- ============================================================================
+}) -- ============================================================================
 -- C/C++ Debugging (using gdb/lldb)
 -- ============================================================================
 dap.adapters.cppdbg = {
