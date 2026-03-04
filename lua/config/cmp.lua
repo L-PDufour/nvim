@@ -4,10 +4,12 @@ local lazydev = require("lazydev")
 lazydev.setup({ ft = "lua" })
 cmp.setup({
 	keymap = {
+		["<Tab>"] = { "snippet_forward", "fallback" },
+		["<S-Tab>"] = { "snippet_backward", "fallback" },
 		preset = "super-tab",
 		["<c-g>"] = {
 			function()
-				require("blink-cmp").show({ providers = { "ripgrep" } })
+				require("blink.cmp").show({ providers = { "ripgrep" } })
 			end,
 		},
 	},
@@ -34,7 +36,7 @@ cmp.setup({
 		keymap = { preset = "inherit" },
 		completion = { menu = { auto_show = true } },
 	},
-	snippets = { preset = "mini_snippets" },
+	snippets = { preset = "default" },
 	sources = {
 		default = { "lazydev", "lsp", "path", "snippets", "buffer" },
 		per_filetype = {
@@ -45,6 +47,12 @@ cmp.setup({
 			plsql = { "dadbod", "buffer" },
 		},
 		providers = {
+			snippets = {
+				opts = {
+					friendly_snippets = true,
+					search_paths = { vim.fn.stdpath("config") .. "/snippets" },
+				},
+			},
 			orgmode = {
 				name = "Orgmode",
 				module = "orgmode.org.autocompletion.blink",

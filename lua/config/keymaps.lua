@@ -69,7 +69,7 @@ local explore_quickfix = function()
 	vim.cmd("copen")
 end
 
-nmap_leader("ed", "<Cmd>lua MiniFiles.open()<CR>", "Directory")
+nmap_leader("ed", "<Cmd>Oil<CR>", "Directory")
 nmap_leader("ef", explore_at_file, "File directory")
 nmap_leader("ei", "<Cmd>edit $MYVIMRC<CR>", "init.lua")
 nmap_leader("en", "<Cmd>lua MiniNotify.show_history()<CR>", "Notifications")
@@ -142,7 +142,8 @@ nmap_leader("vL", "<Cmd>lua MiniVisits.remove_label()<CR>", "Remove label")
 -- - Function keys: F5 (continue), F10 (step over), F11 (step into), F12 (step out)
 local dap = require("dap")
 local dapui = require("dapui")
-
+map("n", "<leader>db", dap.toggle_breakpoint, { desc = "DAP toggle breakpoint" })
+map("n", "<leader>dr", dap.repl.open, { desc = "DAP REPL" })
 map("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
 map("n", "<S-F5>", dap.terminate, { desc = "Debug: Terminate" })
 map("n", "<F9>", dap.toggle_breakpoint, { desc = "Debug: Breakpoint" })

@@ -164,6 +164,15 @@ require("dap-go").setup({
 		build_flags = "",
 		detached = vim.fn.has("win32") == 0,
 	},
+	dap_configurations = {
+		{
+			type = "go",
+			name = "Launch server",
+			request = "launch",
+			program = "${workspaceFolder}/cmd/app",
+			buildFlags = "",
+		},
+	},
 }) -- ============================================================================
 -- C/C++ Debugging (using gdb/lldb)
 -- ============================================================================

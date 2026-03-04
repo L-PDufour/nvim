@@ -32,10 +32,10 @@ MiniMisc.setup_termbg_sync()
 require("mini.notify").setup()
 
 -- Session management
-require("mini.sessions").setup()
+-- require("mini.sessions").setup()
 
 -- Start screen
-require("mini.starter").setup()
+-- require("mini.starter").setup()
 
 -- Statusline
 require("mini.statusline").setup()
@@ -136,54 +136,6 @@ hipatterns.setup({
 		todo = hi_words({ "TODO", "Todo", "todo" }, "MiniHipatternsTodo"),
 		note = hi_words({ "NOTE", "Note", "note" }, "MiniHipatternsNote"),
 		hex_color = hipatterns.gen_highlighter.hex_color(),
-	},
-})
-
--- ============================================================================
--- Picker
--- ============================================================================
-
-require("mini.pick").setup({
-	mappings = {
-		paste_register = {
-			char = "<C-r>",
-			func = function()
-				local content = vim.fn.getreg("+")
-				local current = MiniPick.get_picker_query() or {}
-				table.insert(current, content)
-				MiniPick.set_picker_query(current)
-			end,
-		},
-		yank = {
-			char = "<C-y>",
-			func = function()
-				local matches = MiniPick.get_picker_matches()
-				if matches and matches.current then
-					local item = matches.current
-					vim.fn.setreg("+", item.text or tostring(item))
-					vim.notify("Yanked: " .. (item.text or tostring(item)), vim.log.levels.INFO)
-				end
-			end,
-		},
-	},
-})
--- ============================================================================
--- Snippets
--- ============================================================================
-
-local latex_patterns = { "latex/**/*.json", "**/latex.json" }
-local lang_patterns = {
-	tex = latex_patterns,
-	plaintex = latex_patterns,
-	markdown_inline = { "markdown.json" },
-}
-
-local snippets = require("mini.snippets")
-local config_path = vim.fn.stdpath("config")
-snippets.setup({
-	snippets = {
-		snippets.gen_loader.from_file(config_path .. "/snippets/global.json"),
-		snippets.gen_loader.from_lang({ lang_patterns = lang_patterns }),
 	},
 })
 
