@@ -127,6 +127,8 @@ return {
 	settings = {
 		deno = {
 			enable = true,
+			unstable = true,
+			lint = true,
 			suggest = {
 				imports = {
 					hosts = {
