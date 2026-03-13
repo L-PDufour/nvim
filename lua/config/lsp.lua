@@ -1,4 +1,4 @@
-vim.lsp.enable({ "lua_ls", "gopls", "html", "denols", "pyright", "templ", "clangd", "nixd", "tailwindcss" })
+vim.lsp.enable({ "lua_ls", "gopls", "html", "denolsp", "pyright", "templ", "clangd", "nixd", "tailwindcss" })
 
 vim.lsp.config("*", {
 	capabilities = require("blink.cmp").get_lsp_capabilities(),

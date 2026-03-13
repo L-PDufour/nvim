@@ -93,7 +93,36 @@ return {
 		local fname = vim.api.nvim_buf_get_name(bufnr)
 		get_mod_cache_dir()
 		get_std_lib_dir()
-		-- see: https://github.com/neovim/nvim-lspconfig/issues/804
 		on_dir(get_root_dir(fname))
 	end,
+	settings = {
+		gopls = {
+			-- Formatting
+			gofumpt = true, -- stricter gofmt
+
+			-- Completion
+			usePlaceholders = true, -- fill in function params on completion
+
+			-- Analyses
+			analyses = {
+				unusedvariable = true, -- not enabled by default
+				unusedparams = true,
+			},
+			staticcheck = true, -- enable staticcheck analyzers
+
+			-- Codelenses
+			codelenses = {
+				gc_details = true, -- toggle compiler optimization details
+				generate = true,
+				regenerate_cgo = true,
+				run_govulncheck = true,
+				tidy = true,
+				upgrade_dependency = true,
+				vendor = true,
+			},
+
+			-- Diagnostics
+			diagnosticsTrigger = "Save", -- change to "Edit" if you want live diags
+		},
+	},
 }

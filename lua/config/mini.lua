@@ -3,7 +3,7 @@
 -- └────────────────────┘
 
 -- Color scheme
-vim.cmd("colorscheme catppuccin-frappe")
+-- vim.cmd("colorscheme catppuccin-frappe")
 -- ============================================================================
 -- Core Modules (minimal setup)
 -- ============================================================================
