@@ -286,3 +286,10 @@ map("i", "<C-a>", "<Home>", { desc = "Move to line start" })
 map("i", "<C-e>", "<End>", { desc = "Move to line end" })
 map("i", "<C-b>", "<Left>", { desc = "Move backward" })
 map("i", "<C-f>", "<Right>", { desc = "Move forward" })
+map("n", "<leader>ld", function()
+	local _, winid = vim.diagnostic.open_float({ scope = "line" })
+	if winid then
+		vim.api.nvim_set_current_win(winid)
+	end
+end, { desc = "Line diagnostics" })
+map("n", "<leader>od", "<Cmd>DBUIToggle<CR>", { desc = "Database UI" })

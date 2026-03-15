@@ -19,3 +19,4 @@ load_env_db()
 vim.api.nvim_create_autocmd("DirChanged", {
 	callback = load_env_db,
 })
+vim.g.db_ui_use_nerd_fonts = 1
