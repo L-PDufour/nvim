@@ -25,6 +25,7 @@ _G.Config = {
 
 -- Load configuration modules in order
 require("config.options") -- Vim options
+require("config.themes") -- Vim options
 require("config.autocmds") -- Autocommands
 require("config.keymaps") -- General keymaps
 require("config.mini") -- All mini.nvim setup
