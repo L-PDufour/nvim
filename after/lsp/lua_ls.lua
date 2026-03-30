@@ -83,4 +83,30 @@ return {
 		"selene.yml",
 		".git",
 	},
+	on_init = function(client)
+		local path = vim.fn.stdpath("config")
+		if client.workspace_folders then
+			local wf = client.workspace_folders[1].name
+			if wf ~= path and (vim.uv.fs_stat(wf .. "/.luarc.json") or vim.uv.fs_stat(wf .. "/.luarc.jsonc")) then
+				return
+			end
+		end
+		client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua or {}, {
+			runtime = { version = "LuaJIT" },
+			workspace = {
+				checkThirdParty = false,
+				library = {
+					vim.env.VIMRUNTIME,
+					vim.fn.stdpath("config") .. "/lua",
+				},
+			},
+		})
+		client:notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+	end,
+	settings = {
+		Lua = {
+			workspace = { checkThirdParty = false },
+			completion = { callSnippet = "Replace" },
+		},
+	},
 }

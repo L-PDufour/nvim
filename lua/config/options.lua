@@ -28,14 +28,17 @@ opt.showmode = false
 opt.ruler = false
 opt.pumheight = 10
 opt.pumblend = 10
+opt.pumborder = "double"
+opt.winborder = "double"
 -- opt.winblend = 10
 opt.splitbelow = true
 opt.splitright = true
 opt.splitkeep = "screen"
 opt.list = true
 opt.listchars = { tab = "> ", extends = "…", precedes = "…", nbsp = "␣" }
-opt.fillchars = { eob = " ", fold = "╌" }
+opt.fillchars = { eob = " ", fold = "╌", foldinner = "│" }
 
+opt.fillchars:append({ foldinner = "│" })
 -- Editing
 opt.expandtab = true
 opt.tabstop = 2
@@ -73,3 +76,4 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.schedule(function()
 	opt.clipboard = "unnamedplus"
 end)
+opt.diffopt:append("indent-heuristic,inline:char")

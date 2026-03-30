@@ -1,7 +1,12 @@
 local cmp = require("blink.cmp")
 local lazydev = require("lazydev")
 
-lazydev.setup({ ft = "lua" })
+lazydev.setup({
+	library = {
+		{ path = "luvit-meta/library", words = { "vim%.uv" } },
+	},
+	ft = "lua",
+})
 cmp.setup({
 	keymap = {
 		preset = "super-tab",

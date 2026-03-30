@@ -1,9 +1,19 @@
-vim.lsp.enable({ "lua_ls", "gopls", "html", "denolsp", "pyright", "templ", "clangd", "nixd", "tailwindcss" })
+vim.lsp.enable({
+	"lua_ls",
+	"golangci_lint_ls",
+	"gopls",
+	"html",
+	"denolsp",
+	"pyright",
+	"templ",
+	"clangd",
+	"nixd",
+	"tailwindcss",
+})
 
 vim.lsp.config("*", {
 	capabilities = require("blink.cmp").get_lsp_capabilities(),
 })
-
 vim.diagnostic.config({
 	signs = { priority = 9999, severity = { min = "WARN", max = "ERROR" } },
 	underline = { severity = { min = "HINT", max = "ERROR" } },
@@ -56,7 +66,6 @@ lint.linters_by_ft = {
 	javascriptreact = { "eslint_d" },
 	typescript = { "eslint_d" },
 	typescriptreact = { "eslint_d" },
-	go = { "golangcilint" },
 	python = { "ruff" },
 }
 

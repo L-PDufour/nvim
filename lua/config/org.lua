@@ -22,4 +22,6 @@ require("orgmode").setup({
 		},
 	},
 })
-require("headlines").setup()
+vim.lsp.enable("org")
+
+-- require("headlines").setup()
