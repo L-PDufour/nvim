@@ -17,7 +17,8 @@ vim.pack.add({
 	"https://github.com/christoomey/vim-tmux-navigator",
 	"https://github.com/mbbill/undotree",
 
-	-- Completion (friendly-snippets is a runtime dep of blink.cmp)
+	-- Completion (blink.lib and friendly-snippets are runtime deps of blink.cmp)
+	"https://github.com/saghen/blink.lib",
 	"https://github.com/rafamadriz/friendly-snippets",
 	"https://github.com/saghen/blink.cmp",
 	"https://github.com/stevearc/conform.nvim",
