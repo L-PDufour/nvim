@@ -1,58 +1,50 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- Bootstrap mini.nvim
-local path_package = vim.fn.stdpath("data") .. "/site/"
-local mini_path = path_package .. "pack/deps/start/mini.nvim"
-if not vim.uv.fs_stat(mini_path) then
-	vim.cmd('echo "Installing mini.nvim..." | redraw')
-	vim.fn.system({
-		"git",
-		"clone",
-		"--filter=blob:none",
-		"https://github.com/echasnovski/mini.nvim",
-		mini_path,
-	})
-	vim.cmd("packadd mini.nvim | helptags ALL")
-end
+-- vim.pack is built into Neovim 0.12 — no bootstrap needed.
+-- { load = true } sources plugin/* and ftdetect/* immediately (required for
+-- VimL plugins like vim-tmux-navigator and vim-dadbod that define commands
+-- and mappings in those files).
+vim.pack.add({
+	"https://github.com/echasnovski/mini.nvim",
 
-require("mini.deps").setup({ path = { package = path_package } })
+	-- Colorscheme
+	{ src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
 
-local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
+	-- UI & navigation
+	"https://github.com/folke/flash.nvim",
+	"https://github.com/folke/which-key.nvim",
+	"https://github.com/christoomey/vim-tmux-navigator",
+	"https://github.com/mbbill/undotree",
 
--- Colorscheme
-add("catppuccin/nvim")
+	-- Completion (friendly-snippets is a runtime dep of blink.cmp)
+	"https://github.com/rafamadriz/friendly-snippets",
+	"https://github.com/saghen/blink.cmp",
+	"https://github.com/stevearc/conform.nvim",
+	"https://github.com/mfussenegger/nvim-lint",
+	"https://github.com/folke/lazydev.nvim",
+	"https://github.com/mikavilpas/blink-ripgrep.nvim",
 
--- UI & navigation
-add("folke/flash.nvim")
-add("folke/which-key.nvim")
-add("christoomey/vim-tmux-navigator")
-add("mbbill/undotree")
+	-- DAP (nvim-nio must precede nvim-dap-ui)
+	"https://github.com/nvim-neotest/nvim-nio",
+	"https://github.com/mfussenegger/nvim-dap",
+	"https://github.com/rcarriga/nvim-dap-ui",
+	"https://github.com/theHamsta/nvim-dap-virtual-text",
+	"https://github.com/leoluz/nvim-dap-go",
+	"https://github.com/mfussenegger/nvim-dap-python",
 
--- Completion & LSP tooling
-add({ source = "saghen/blink.cmp", depends = { "rafamadriz/friendly-snippets" } })
-add("stevearc/conform.nvim")
-add("mfussenegger/nvim-lint")
-add("folke/lazydev.nvim")
-add("mikavilpas/blink-ripgrep.nvim")
+	-- Other tools
+	"https://github.com/nvim-orgmode/orgmode",
+	"https://github.com/stevearc/overseer.nvim",
+	"https://github.com/stevearc/oil.nvim",
+	"https://github.com/stevearc/quicker.nvim",
+	"https://github.com/ibhagwan/fzf-lua",
+	"https://github.com/tpope/vim-dadbod",
+	"https://github.com/kristijanhusak/vim-dadbod-ui",
+	"https://github.com/kristijanhusak/vim-dadbod-completion",
+}, { load = true })
 
--- DAP (nvim-dap-ui depends on nvim-dap and nvim-nio)
-add({ source = "rcarriga/nvim-dap-ui", depends = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } })
-add("theHamsta/nvim-dap-virtual-text")
-add("leoluz/nvim-dap-go")
-add("mfussenegger/nvim-dap-python")
-
--- Other tools
-add("nvim-orgmode/orgmode")
-add("stevearc/overseer.nvim")
-add("stevearc/oil.nvim")
-add("stevearc/quicker.nvim")
-add("ibhagwan/fzf-lua")
-add("tpope/vim-dadbod")
-add("kristijanhusak/vim-dadbod-ui")
-add("kristijanhusak/vim-dadbod-completion")
-
--- Global config table (must be set before config modules are loaded)
+-- Create global config table for sharing data between modules
 _G.Config = {
 	autocmd_group = vim.api.nvim_create_augroup("ConfigGroup", { clear = true }),
 
@@ -68,19 +60,16 @@ _G.Config = {
 	leader_groups = {},
 }
 
--- Immediate: options, appearance, core plugins (needed before first draw)
-now(function() require("config.options") end)
-now(function() require("config.themes") end)
-now(function() require("config.autocmds") end)
-now(function() require("config.mini") end)
-now(function() require("config.lsp") end)
-now(function() require("config.cmp") end)
-
--- Deferred: loaded after VimEnter in declaration order
--- keymaps must follow dap (it requires dap/dapui/dap-go at load time)
-later(function() require("config.dap") end)
-later(function() require("config.keymaps") end)
-later(function() require("config.org") end)
-later(function() require("config.quicker") end)
-later(function() require("config.fzf") end)
-later(function() require("config.dadbod") end)
+-- Load configuration modules in order
+require("config.options")
+require("config.themes")
+require("config.autocmds")
+require("config.keymaps")
+require("config.mini")
+require("config.lsp")
+require("config.cmp")
+require("config.dap")
+require("config.org")
+require("config.quicker")
+require("config.fzf")
+require("config.dadbod")
