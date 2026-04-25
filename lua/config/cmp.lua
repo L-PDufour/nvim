@@ -92,7 +92,7 @@ cmp.setup({
 		},
 	},
 
-	fuzzy = { implementation = "prefer_rust_with_warning" },
+	fuzzy = { implementation = "lua" },
 	-- experimental signature help support
 	signature = { enabled = true },
 })

@@ -176,8 +176,6 @@ wk.add({
 	{ "<Leader>b", group = "+Buffer" },
 	{ "<Leader>e", group = "+Explore/Edit" },
 	{ "<Leader>f", group = "+Find" },
-	{ "<Leader>g", group = "+Git" },
-	{ "<Leader>l", group = "+Language" },
 	{ "<Leader>o", group = "+Other" },
 	{ "<Leader>s", group = "+Session" },
 	{ "<Leader>t", group = "+Terminal" },
