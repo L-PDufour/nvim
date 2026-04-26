@@ -6,7 +6,7 @@ vim.g.maplocalleader = " "
 -- VimL plugins like vim-tmux-navigator and vim-dadbod that define commands
 -- and mappings in those files).
 vim.pack.add({
-	"https://github.com/echasnovski/mini.nvim",
+	{ src = "https://github.com/nvim-mini/mini.nvim", version = "stable" },
 
 	-- Colorscheme
 	{ src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
@@ -17,10 +17,9 @@ vim.pack.add({
 	"https://github.com/christoomey/vim-tmux-navigator",
 	"https://github.com/mbbill/undotree",
 
-	-- Completion (blink.lib and friendly-snippets are runtime deps of blink.cmp)
-	"https://github.com/saghen/blink.lib",
+	-- Completion (friendly-snippets is a runtime dep of blink.cmp)
 	"https://github.com/rafamadriz/friendly-snippets",
-	"https://github.com/saghen/blink.cmp",
+	{ src = "https://github.com/saghen/blink.cmp", version = "v1" },
 	"https://github.com/stevearc/conform.nvim",
 	"https://github.com/mfussenegger/nvim-lint",
 	"https://github.com/folke/lazydev.nvim",
