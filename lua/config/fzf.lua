@@ -35,6 +35,8 @@ end
 nmap_leader("ff", fzf.files, "Files")
 nmap_leader("fh", fzf.helptags, "Help tags")
 nmap_leader(".", fzf.resume, "Resume")
+nmap_leader("fq", fzf.quickfix, "Quickfix")
+nmap_leader("fQ", fzf.loclist, "Loclist")
 nmap_leader("fd", function()
 	fzf.diagnostics_document()
 end, "Diagnostic buf")
