@@ -89,6 +89,13 @@ end
 return {
 	cmd = { "gopls" },
 	filetypes = { "go", "gomod", "gowork", "gotmpl" },
+	capabilities = {
+		workspace = {
+			didChangeWatchedFiles = {
+				dynamicRegistration = true,
+			},
+		},
+	},
 	root_dir = function(bufnr, on_dir)
 		local fname = vim.api.nvim_buf_get_name(bufnr)
 		get_mod_cache_dir()
@@ -97,22 +104,21 @@ return {
 	end,
 	settings = {
 		gopls = {
-			-- Formatting
-			gofumpt = true, -- stricter gofmt
-
-			-- Completion
-			usePlaceholders = true, -- fill in function params on completion
-
-			-- Analyses
+			templateExtensions = { "templ" },
+			gofumpt = true,
+			usePlaceholders = true,
+			directoryFilters = {
+				"-node_modules",
+				"-vendor",
+				"-.git",
+			},
 			analyses = {
-				unusedvariable = true, -- not enabled by default
+				unusedvariable = true,
 				unusedparams = true,
 			},
-			staticcheck = true, -- enable staticcheck analyzers
-
-			-- Codelenses
+			staticcheck = true,
 			codelenses = {
-				gc_details = true, -- toggle compiler optimization details
+				gc_details = true,
 				generate = true,
 				regenerate_cgo = true,
 				run_govulncheck = true,
@@ -120,9 +126,7 @@ return {
 				upgrade_dependency = true,
 				vendor = true,
 			},
-
-			-- Diagnostics
-			diagnosticsTrigger = "Save", -- change to "Edit" if you want live diags
+			diagnosticsTrigger = "Save",
 		},
 	},
 }
