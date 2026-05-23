@@ -1,142 +1,104 @@
-{ inputs }:
+{ inputs, pkgsFor }:
 let
-  inherit (inputs.nixpkgs) legacyPackages;
 in
 rec {
   mkVimPlugin =
     { system }:
     let
-      inherit (pkgs) vimUtils;
-      inherit (vimUtils) buildVimPlugin;
-      pkgs = legacyPackages.${system};
+      pkgs = pkgsFor system;
+      inherit (pkgs.vimUtils) buildVimPlugin;
     in
     buildVimPlugin {
-      buildInputs = with pkgs; [
-        doppler
-        nodejs
-      ];
-      name = "TheAltF4Stream";
+      name = "config";
       src = ../.;
-
-      dependencies = with pkgs.vimPlugins; [
-        plenary-nvim
-        nvim-treesitter.withAllGrammars
-        mini-nvim
-        nvim-lint
-        friendly-snippets
-        conform-nvim
-        undotree
-        blink-cmp
-        blink-ripgrep-nvim
-        orgmode
-        headlines-nvim
-        lazydev-nvim
-        catppuccin-nvim
-        snacks-nvim
-        fzf-lua
-        devdocs-nvim
-        which-key-nvim
-        flash-nvim
-        nvim-dap
-        nvim-dap-ui
-        nvim-nio
-        nvim-dap-go
-        nvim-dap-lldb
-        nvim-dap-vscode-js
-        nvim-dap-python
-        nvim-dap-virtual-text
-        vim-dadbod
-        vim-dadbod-completion
-        vim-dadbod-ui
-        oil-nvim
-        quicker-nvim
-        overseer-nvim
-        everforest
-        gruvbox-material-nvim
-        vim-tmux-navigator
-      ];
-
-      nvimSkipModules = [
-        "init"
-        "notify.integrations.fzf"
-      ];
-
+      doCheck = false;
       postInstall = ''
-        rm -rf $out/.envrc
-        rm -rf $out/.gitignore
-        rm -rf $out/LICENSE
-        rm -rf $out/README.md
-        rm -rf $out/flake.lock
         rm -rf $out/flake.nix
-        rm -rf $out/justfile
+        rm -rf $out/flake.lock
         rm -rf $out/lib
+        rm -rf $out/package.nix
       '';
     };
 
   mkNeovimPlugins =
     { system }:
     let
-      inherit (pkgs) vimPlugins;
-      pkgs = legacyPackages.${system};
-      thealtf4stream-nvim = mkVimPlugin { inherit system; };
+      pkgs = pkgsFor system;
+      configPlugin = mkVimPlugin { inherit system; };
     in
-    with vimPlugins;
+    with pkgs.vimPlugins;
     [
-      # languages
-      vim-just
-      zig-vim
-
-      # floaterm
-      vim-floaterm
-
-      # extras
-      image-nvim
-      nvim-colorizer-lua
-      nvim-web-devicons
-      rainbow-delimiters-nvim
-      trouble-nvim
-
-      # configuration
-      thealtf4stream-nvim
+      plenary-nvim
+      nvim-treesitter.withAllGrammars
+      mini-nvim
+      nvim-lint
+      friendly-snippets
+      conform-nvim
+      undotree
+      blink-cmp
+      blink-ripgrep-nvim
+      orgmode
+      headlines-nvim
+      lazydev-nvim
+      catppuccin-nvim
+      snacks-nvim
+      fzf-lua
+      devdocs-nvim
+      which-key-nvim
+      flash-nvim
+      nvim-dap
+      nvim-dap-ui
+      nvim-nio
+      nvim-dap-go
+      nvim-dap-lldb
+      nvim-dap-vscode-js
+      nvim-dap-python
+      nvim-dap-virtual-text
+      vim-dadbod
+      vim-dadbod-completion
+      vim-dadbod-ui
+      oil-nvim
+      quicker-nvim
+      overseer-nvim
+      everforest
+      gruvbox-material-nvim
+      vim-tmux-navigator
+      # your config as a plugin — loaded last
+      configPlugin
     ];
 
-  mkExtraConfig = ''
-    lua << EOF
-      require 'TheAltF4Stream'.init()
-    EOF
-  '';
+  mkExtraPackages =
+    { system }:
+    let
+      pkgs = pkgsFor system;
+    in
+    with pkgs;
+    [
+      tree-sitter
+      jq
+      curl
+      pandoc
+      bat
+    ];
 
   mkNeovim =
     { system }:
     let
-      inherit (pkgs) lib neovim;
-      pkgs = legacyPackages.${system};
+      pkgs = pkgsFor system;
+      configPlugin = mkVimPlugin { inherit system; };
       start = mkNeovimPlugins { inherit system; };
+      extraPackages = mkExtraPackages { inherit system; };
     in
-    neovim.override {
+    pkgs.neovim.override {
       configure = {
-        customRC = mkExtraConfig;
+        customRC = ''
+          luafile ${configPlugin}/init.lua
+        '';
         packages.main = { inherit start; };
       };
-      extraMakeWrapperArgs = ''--suffix PATH : "${lib.makeBinPath}"'';
-      withNodeJs = true;
-      withPython3 = true;
-      withRuby = true;
-    };
-
-  mkHomeManager =
-    { system }:
-    let
-      extraConfig = mkExtraConfig;
-      plugins = mkNeovimPlugins { inherit system; };
-    in
-    {
-      inherit extraConfig plugins;
-      defaultEditor = true;
-      enable = true;
-      extraLuaPackages = ps: [ ps.magick ];
-      withNodeJs = true;
-      withPython3 = true;
-      withRuby = true;
+      extraMakeWrapperArgs = ''--suffix PATH : "${pkgs.lib.makeBinPath extraPackages}"'';
+      withPython3 = false;
+      withNodeJs = false;
+      withRuby = false;
     };
 }
