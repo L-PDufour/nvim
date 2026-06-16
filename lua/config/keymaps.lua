@@ -69,7 +69,6 @@ local explore_quickfix = function()
 	vim.cmd("copen")
 end
 
-nmap_leader("ed", "<Cmd>Oil<CR>", "Directory")
 nmap_leader("ef", explore_at_file, "File directory")
 nmap_leader("ei", "<Cmd>edit $MYVIMRC<CR>", "init.lua")
 nmap_leader("en", "<Cmd>lua MiniNotify.show_history()<CR>", "Notifications")

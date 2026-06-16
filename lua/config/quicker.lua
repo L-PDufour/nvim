@@ -1,5 +1,4 @@
 local overseer = require("overseer")
-require("oil").setup()
 overseer.setup()
 
 local function make(target)

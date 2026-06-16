@@ -149,3 +149,23 @@ Config.autocmd("BufWritePre", nil, function()
 	-- Restore cursor position
 	vim.api.nvim_win_set_cursor(0, cursor)
 end, "Trim trailing whitespace on save")
+
+-- ============================================================================
+-- GOPLS FILE CHANGE NOTIFICATION
+-- ============================================================================
+-- Explicitly notify gopls of file changes so it re-analyzes dependent packages.
+-- Without this, struct field changes in one file won't reflect in other open
+-- buffers until they are reloaded or the LSP is restarted.
+Config.autocmd("BufWritePost", { "*.go", "*.templ" }, function(args)
+	local clients = vim.lsp.get_clients({ name = "gopls" })
+	for _, client in ipairs(clients) do
+		client.notify("workspace/didChangeWatchedFiles", {
+			changes = {
+				{
+					uri = vim.uri_from_fname(args.match),
+					type = 2, -- Changed
+				},
+			},
+		})
+	end
+end, "Notify gopls of go/templ file changes")

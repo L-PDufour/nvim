@@ -40,7 +40,6 @@ rec {
       orgmode
       headlines-nvim
       lazydev-nvim
-      catppuccin-nvim
       snacks-nvim
       devdocs-nvim
       which-key-nvim
@@ -56,12 +55,11 @@ rec {
       vim-dadbod
       vim-dadbod-completion
       vim-dadbod-ui
-      oil-nvim
       quicker-nvim
       overseer-nvim
-      everforest
-      gruvbox-material-nvim
-      vim-tmux-navigator
+
+      base16-nvim
+
       # your config as a plugin — loaded last
       configPlugin
     ];
