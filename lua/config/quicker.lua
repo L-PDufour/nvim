@@ -27,6 +27,10 @@ vim.keymap.set("n", "<leader>ms", function()
 	make("start")
 end, { desc = "make start" })
 vim.keymap.set("n", "<leader>mo", "<cmd>OverseerToggle<cr>", { desc = "overseer toggle" })
+-- Emacs `M-x compile` / `M-x recompile` equivalents: pick (or type) any
+-- task instead of only the hardcoded make targets above.
+vim.keymap.set("n", "<leader>mm", "<cmd>OverseerRun<cr>", { desc = "compile (pick/run task)" })
+vim.keymap.set("n", "<leader>mr", "<cmd>OverseerRestartLast<cr>", { desc = "recompile (rerun last task)" })
 require("quicker").setup()
 vim.keymap.set("n", "<leader>qq", function()
 	require("quicker").toggle()
