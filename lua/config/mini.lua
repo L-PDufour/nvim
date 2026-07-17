@@ -140,6 +140,20 @@ hipatterns.setup({
 })
 
 -- ============================================================================
+-- Pickers & Input
+-- ============================================================================
+
+-- Pick (replaces fzf-lua); also take over `vim.ui.select`
+local MiniPick = require("mini.pick")
+MiniPick.setup()
+vim.ui.select = MiniPick.ui_select
+
+-- Floating `vim.ui.input` (LSP rename, compile prompt, etc.)
+local MiniInput = require("mini.input")
+MiniInput.setup()
+vim.ui.input = MiniInput.ui_input
+
+-- ============================================================================
 -- External Plugins
 -- ============================================================================
 

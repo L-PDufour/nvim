@@ -16,7 +16,6 @@ let
     lazydev-nvim
     catppuccin-nvim
     snacks-nvim
-    fzf-lua
     devdocs-nvim
     which-key-nvim
     flash-nvim

@@ -34,5 +34,5 @@ require("config.cmp") -- Completion setup
 require("config.dap") -- DAP (debugger) setup
 require("config.org")
 require("config.quicker")
-require("config.fzf")
+require("config.pick")
 require("config.dadbod")
