@@ -44,6 +44,9 @@ let
     curl
     pandoc
     bat
+    # inotifywait backend for vim.lsp file watching (libuv-watchdirs
+    # fallback has known performance issues)
+    inotify-tools
   ];
 
   configDir = pkgs.stdenv.mkDerivation {
