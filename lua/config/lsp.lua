@@ -14,6 +14,19 @@ vim.lsp.enable({
 vim.lsp.config("*", {
 	capabilities = require("blink.cmp").get_lsp_capabilities(),
 })
+
+-- templ proxies this notification verbatim to its internal gopls, which
+-- otherwise never learns about edits to plain .go files (they aren't
+-- attached to the templ client). The OS file watcher should cover this,
+-- but is unreliable on Linux, so push the event ourselves on save.
+Config.autocmd("BufWritePost", "*.go", function(ev)
+	local fname = vim.api.nvim_buf_get_name(ev.buf)
+	for _, client in ipairs(vim.lsp.get_clients({ name = "templ" })) do
+		client:notify("workspace/didChangeWatchedFiles", {
+			changes = { { uri = vim.uri_from_fname(fname), type = 2 } }, -- 2 = Changed
+		})
+	end
+end, "Notify templ LSP about Go file changes")
 vim.diagnostic.config({
 	signs = { priority = 9999, severity = { min = "WARN", max = "ERROR" } },
 	underline = { severity = { min = "HINT", max = "ERROR" } },
@@ -50,7 +63,7 @@ require("conform").setup({
 		json = js_formatters,
 		html = { "prettierd", "prettier", stop_after_first = true },
 		css = { "prettierd", "prettier", stop_after_first = true },
-		templ = { "templ" },
+		templ = { "got tool templ fmt" },
 	},
 	format_on_save = {
 		timeout_ms = 500,
