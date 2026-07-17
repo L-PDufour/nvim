@@ -28,36 +28,19 @@ vim.keymap.set("n", "<leader>ms", function()
 end, { desc = "make start" })
 vim.keymap.set("n", "<leader>mo", "<cmd>OverseerToggle<cr>", { desc = "overseer toggle" })
 
--- Emacs `M-x compile` / `M-x recompile`: prompt for an arbitrary shell
--- command (no target autodetection/enumeration) and remember it for rerun.
-local last_compile_cmd = nil
-
-local function compile(cmd)
-	last_compile_cmd = cmd
-	overseer
-		.new_task({
-			cmd = cmd,
-			name = cmd,
-			components = { { "on_output_quickfix", open = true }, "default" },
-		})
-		:start()
-end
-
-vim.keymap.set("n", "<leader>mm", function()
-	vim.ui.input({ prompt = "Compile: ", default = last_compile_cmd or "make " }, function(cmd)
-		if cmd and cmd ~= "" then
-			compile(cmd)
-		end
-	end)
-end, { desc = "compile (prompt for command)" })
-
-vim.keymap.set("n", "<leader>mr", function()
-	if not last_compile_cmd then
-		vim.notify("No previous compile command", vim.log.levels.WARN)
-		return
+-- Restart the most recent task (recipe from overseer's docs; there is no
+-- builtin command for this).
+vim.api.nvim_create_user_command("OverseerRestartLast", function()
+	local tasks = overseer.list_tasks({ recent_first = true })
+	if vim.tbl_isempty(tasks) then
+		vim.notify("No tasks found", vim.log.levels.WARN)
+	else
+		overseer.run_action(tasks[1], "restart")
 	end
-	compile(last_compile_cmd)
-end, { desc = "recompile (rerun last command)" })
+end, {})
+
+vim.keymap.set("n", "<leader>mm", "<cmd>OverseerRun<cr>", { desc = "compile (pick/run task)" })
+vim.keymap.set("n", "<leader>mr", "<cmd>OverseerRestartLast<cr>", { desc = "recompile (rerun last task)" })
 require("quicker").setup()
 vim.keymap.set("n", "<leader>qq", function()
 	require("quicker").toggle()

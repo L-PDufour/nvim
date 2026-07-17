@@ -14,16 +14,6 @@ vim.lsp.enable({
 vim.lsp.config("*", {
 	capabilities = require("blink.cmp").get_lsp_capabilities(),
 })
-
--- templ's gopls proxy doesn't pick up struct/type changes made in plain
--- .go files, so diagnostics/completion in .templ buffers go stale until
--- the client is restarted. Do that automatically instead of by hand.
-Config.autocmd("BufWritePost", "*.go", function()
-	if #vim.lsp.get_clients({ name = "templ" }) == 0 then
-		return
-	end
-	vim.cmd("LspRestart templ")
-end, "Restart templ LSP after Go file changes")
 vim.diagnostic.config({
 	signs = { priority = 9999, severity = { min = "WARN", max = "ERROR" } },
 	underline = { severity = { min = "HINT", max = "ERROR" } },
