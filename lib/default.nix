@@ -1,22 +1,16 @@
 { inputs, pkgsFor }:
-let
-in
 rec {
   mkVimPlugin =
     { system }:
     let
       pkgs = pkgsFor system;
-      inherit (pkgs.vimUtils) buildVimPlugin;
     in
-    buildVimPlugin {
+    pkgs.vimUtils.buildVimPlugin {
       name = "config";
       src = ../.;
       doCheck = false;
       postInstall = ''
-        rm -rf $out/flake.nix
-        rm -rf $out/flake.lock
-        rm -rf $out/lib
-        rm -rf $out/package.nix
+        rm -rf $out/flake.nix $out/flake.lock $out/lib
       '';
     };
 
@@ -24,26 +18,30 @@ rec {
     { system }:
     let
       pkgs = pkgsFor system;
-      configPlugin = mkVimPlugin { inherit system; };
     in
     with pkgs.vimPlugins;
     [
+      # core
       plenary-nvim
       nvim-treesitter.withAllGrammars
       mini-nvim
-      nvim-lint
-      friendly-snippets
-      conform-nvim
-      undotree
-      blink-cmp
-      blink-ripgrep-nvim
-      orgmode
-      headlines-nvim
-      lazydev-nvim
       snacks-nvim
-      devdocs-nvim
       which-key-nvim
       flash-nvim
+      base16-nvim
+
+      # editing / completion
+      blink-cmp
+      blink-ripgrep-nvim
+      friendly-snippets
+      lazydev-nvim
+      undotree
+
+      # lint / format
+      nvim-lint
+      conform-nvim
+
+      # dap
       nvim-dap
       nvim-dap-ui
       nvim-nio
@@ -52,16 +50,23 @@ rec {
       nvim-dap-vscode-js
       nvim-dap-python
       nvim-dap-virtual-text
+
+      # db
       vim-dadbod
       vim-dadbod-completion
       vim-dadbod-ui
+
+      # misc
+      orgmode
+      headlines-nvim
+      devdocs-nvim
       quicker-nvim
       overseer-nvim
 
-      base16-nvim
+      vim-tmux-navigator
 
       # your config as a plugin — loaded last
-      configPlugin
+      (mkVimPlugin { inherit system; })
     ];
 
   mkExtraPackages =
@@ -71,6 +76,7 @@ rec {
     in
     with pkgs;
     [
+      # runtime deps
       tree-sitter
       jq
       curl
@@ -79,6 +85,27 @@ rec {
       # inotifywait backend for vim.lsp file watching (libuv-watchdirs
       # fallback has known performance issues)
       inotify-tools
+
+      # formatters (conform)
+      stylua
+      black
+      prettierd
+      templ
+      gofumpt
+      nixfmt
+
+      # debug adapters (dap)
+      delve
+      lldb # provides lldb-dap
+      vscode-js-debug
+      (python3.withPackages (ps: [ ps.debugpy ]))
+
+      # lsp — editor-adjacent, version-insensitive
+      lua-language-server
+      nixd
+      marksman
+      # project-sensitive servers (gopls, clangd, rust-analyzer, ts_ls, pyright)
+      # come from project devShells
     ];
 
   mkNeovim =
@@ -86,17 +113,15 @@ rec {
     let
       pkgs = pkgsFor system;
       configPlugin = mkVimPlugin { inherit system; };
-      start = mkNeovimPlugins { inherit system; };
-      extraPackages = mkExtraPackages { inherit system; };
     in
     pkgs.neovim.override {
       configure = {
         customRC = ''
           luafile ${configPlugin}/init.lua
         '';
-        packages.main = { inherit start; };
+        packages.main.start = mkNeovimPlugins { inherit system; };
       };
-      extraMakeWrapperArgs = ''--suffix PATH : "${pkgs.lib.makeBinPath extraPackages}"'';
+      extraMakeWrapperArgs = ''--suffix PATH : "${pkgs.lib.makeBinPath (mkExtraPackages { inherit system; })}"'';
       withPython3 = false;
       withNodeJs = false;
       withRuby = false;

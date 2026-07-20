@@ -5,7 +5,7 @@
 -- HIGHLIGHT ON YANK
 -- ============================================================================
 Config.autocmd("TextYankPost", nil, function()
-	vim.highlight.on_yank({ timeout = 200 })
+	vim.hl.on_yank({ timeout = 200 })
 end, "Highlight yanked text")
 
 -- ============================================================================
@@ -159,7 +159,7 @@ end, "Trim trailing whitespace on save")
 Config.autocmd("BufWritePost", { "*.go", "*.templ" }, function(args)
 	local clients = vim.lsp.get_clients({ name = "gopls" })
 	for _, client in ipairs(clients) do
-		client.notify("workspace/didChangeWatchedFiles", {
+		client:notify("workspace/didChangeWatchedFiles", {
 			changes = {
 				{
 					uri = vim.uri_from_fname(args.match),
