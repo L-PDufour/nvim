@@ -58,7 +58,7 @@ opt.incsearch = true
 opt.hlsearch = true
 
 -- Completion
-opt.completeopt = "menuone,noinsert,noselect"
+opt.completeopt = "menuone,noselect,fuzzy,nosort"
 opt.complete = ".,w,b,kspell"
 
 -- Folds

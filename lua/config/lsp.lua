@@ -9,6 +9,7 @@ vim.lsp.enable({
 	"clangd",
 	"nixd",
 	"tailwindcss",
+	"cssls",
 })
 
 vim.lsp.config("*", {
