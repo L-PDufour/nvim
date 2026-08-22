@@ -37,5 +37,6 @@ require("config.quicker")
 require("config.compile") -- Emacs-style :Compile/:Recompile (overseer)
 require("config.snacks") -- Persistent scratch buffers
 require("config.act") -- Embark-style act-at-point (g.)
+require("config.ai") -- CodeCompanion: DeepSeek chat + opencode ACP agent
 require("config.pick")
 require("config.dadbod")

@@ -186,6 +186,7 @@ require("which-key").setup({
 })
 local wk = require("which-key")
 wk.add({
+	{ "<Leader>a", group = "+AI" },
 	{ "<Leader>b", group = "+Buffer" },
 	{ "<Leader>e", group = "+Explore/Edit" },
 	{ "<Leader>f", group = "+Find" },

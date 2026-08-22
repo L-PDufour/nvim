@@ -56,6 +56,9 @@ rec {
       vim-dadbod-completion
       vim-dadbod-ui
 
+      # ai (config in lua/config/ai.lua)
+      codecompanion-nvim
+
       # misc
       orgmode
       headlines-nvim

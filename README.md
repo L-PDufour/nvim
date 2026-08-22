@@ -59,6 +59,25 @@ config with `NVIM_APPNAME=nvim-test nvim` without touching the main one.
   list; quicker makes that buffer editable, so `:w` there applies your
   edits back to the underlying files.
 
+## AI (DeepSeek + opencode)
+
+CodeCompanion provides one chat-buffer UI with two backends
+(`lua/config/ai.lua`):
+
+- **deepseek (http)** — direct API calls, the default for chat/inline and
+  the teaching prompts. Put the API key in `~/.config/deepseek/api_key`
+  (`chmod 600`). Default model is `deepseek-chat`; switch to
+  `deepseek-reasoner` from the chat buffer when you want visible reasoning.
+- **opencode (acp)** — CodeCompanion drives the `opencode` CLI over the
+  Agent Client Protocol for repo-level questions and multi-file work.
+  opencode is installed and configured for DeepSeek in nixcfg
+  (`modules/home/ai.nix`); authenticate once with `opencode auth login`.
+
+Keymaps: `<leader>ac` chat toggle, `<leader>ao` chat with the opencode
+agent, `<leader>aa` action palette; on a visual selection `<leader>at`
+starts a socratic tutor session and `<leader>ae` an in-depth explanation
+(prompt library in `ai.lua` — edit live, no rebuild).
+
 ## Trying fennel later
 
 Because the config is loaded live, adding [Fennel](https://fennel-lang.org/)
