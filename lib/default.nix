@@ -65,8 +65,9 @@ rec {
 
       vim-tmux-navigator
 
-      # your config as a plugin — loaded last
-      (mkVimPlugin { inherit system; })
+      # fennel — uncomment when ready to try it: write .fnl files under
+      # fnl/ in the live config and hotpot compiles them on the fly
+      # hotpot-nvim
     ];
 
   mkExtraPackages =
@@ -109,17 +110,47 @@ rec {
     ];
 
   mkNeovim =
-    { system }:
+    {
+      system,
+      # true  → bake the config snapshot from this repo into the store
+      #         (fully reproducible, but every edit needs a rebuild)
+      # false → load the config live from stdpath("config")
+      #         (~/.config/nvim), falling back to the baked snapshot when
+      #         no local checkout exists — so `nix run` works anywhere
+      embedConfig ? false,
+    }:
     let
       pkgs = pkgsFor system;
       configPlugin = mkVimPlugin { inherit system; };
+      # The wrapper starts nvim with -u, which skips the user's init file
+      # but leaves stdpath("config") on the runtimepath — so in live mode
+      # lua/, after/ and plugin/ resolve natively and only init.lua needs
+      # to be loaded by hand.
+      liveInit = pkgs.writeText "live-init.lua" ''
+        local user_init = vim.fn.stdpath("config") .. "/init.lua"
+        if vim.fn.filereadable(user_init) == 1 then
+          dofile(user_init)
+        else
+          vim.opt.rtp:prepend("${configPlugin}")
+          vim.opt.rtp:append("${configPlugin}/after")
+          dofile("${configPlugin}/init.lua")
+        end
+      '';
     in
     pkgs.neovim.override {
       configure = {
-        customRC = ''
-          luafile ${configPlugin}/init.lua
-        '';
-        packages.main.start = mkNeovimPlugins { inherit system; };
+        customRC =
+          if embedConfig then
+            ''
+              luafile ${configPlugin}/init.lua
+            ''
+          else
+            ''
+              luafile ${liveInit}
+            '';
+        packages.main.start =
+          mkNeovimPlugins { inherit system; }
+          ++ pkgs.lib.optional embedConfig configPlugin;
       };
       extraMakeWrapperArgs = ''--suffix PATH : "${pkgs.lib.makeBinPath (mkExtraPackages { inherit system; })}"'';
       withPython3 = false;

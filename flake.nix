@@ -15,8 +15,12 @@
       lib = import ./lib { inputs = self.inputs; inherit pkgsFor; };
 
       packages = forAllSystems (system: {
+        # live config: nix provides the binary, plugins and tools;
+        # the lua config is read from ~/.config/nvim at startup
         default   = self.lib.mkNeovim { inherit system; };
         neovim    = self.lib.mkNeovim { inherit system; };
+        # config snapshot baked into the store (old behavior)
+        standalone = self.lib.mkNeovim { inherit system; embedConfig = true; };
         vimPlugin = self.lib.mkVimPlugin { inherit system; };
       });
 
