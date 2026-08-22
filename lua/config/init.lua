@@ -34,5 +34,8 @@ require("config.cmp") -- Completion setup
 require("config.dap") -- DAP (debugger) setup
 require("config.org")
 require("config.quicker")
+require("config.compile") -- Emacs-style :Compile/:Recompile (overseer)
+require("config.snacks") -- Persistent scratch buffers
+require("config.act") -- Embark-style act-at-point (g.)
 require("config.pick")
 require("config.dadbod")
