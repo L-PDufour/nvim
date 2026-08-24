@@ -87,6 +87,119 @@ local function make(target)
 		:start()
 end
 
+-- Persistent `make dev` hot-reload watcher (air + templ generate --watch). The
+-- task stays alive in the background so the dev server keeps running — an Emacs
+-- *compile* that never quits.
+--   • build/runtime errors stream into the quickfix WITHOUT stealing focus
+--     (no `open=true`), so you look them up on demand with :cnext/<leader>qq.
+--   • we ping via mini.notify when an error line shows up in the output — this
+--     is the real feedback loop, because air swallows build errors and keeps the
+--     task alive, so "task exited nonzero" never fires. (See GO_ERRFMT & the
+--     on_output_lines handler below.)
+--   • starting it a second time toggles it off instead of spawning a duplicate.
+local DEV_TASK_NAME = "make dev"
+
+-- Set right before we intentionally stop the watcher, so the resulting status
+-- transition doesn't trigger a false "make dev failed" notification.
+local dev_stopped_manually = false
+
+-- errorformat tuned for `go build`-style + air/templ output, same grammar as
+-- Neovim's own `compiler/go.vim` (ignores "# package" headers, keeps the
+-- `file:line:col` / `file:line` forms so the quickfix is navigable, and drops
+-- everything else so app log noise stays out of the quickfix). This is what
+-- `on_output_quickfix` feeds `getqflist()`.
+local GO_ERRFMT = table.concat({
+	"%-G# %.%#", -- ignore "# package" headers
+	"%A%f:%l:%c: %m",
+	"%A%f:%l: %m",
+	"%C%*\\s%m", -- continuation/snippet lines
+	"%-G%.%#", -- ignore everything else (keeps runtime log noise out of the quickfix)
+}, ",")
+
+-- These substrings (lowercased) in a line mean "something is wrong"; we debounce
+-- a burst of failing lines into a single notification.
+local ERROR_PATTERNS = {
+	"level=error",
+	"error starting",
+	"failed to build",
+	"build failed",
+	"process exit with code:",
+	"syntax error",
+	"undefined:",
+	"cannot use",
+	"redeclared",
+	"not enough arguments",
+	"too many arguments",
+	"connection refused",
+	".go:", -- go compiler "file.go:line:col" lines
+}
+
+local dev_notify_cooldown = 0
+
+local function dev_notify_if_error(task, lines)
+	if dev_stopped_manually then
+		return
+	end
+	local now = vim.loop.now()
+	if now - dev_notify_cooldown < 5000 then
+		return -- still inside a burst; don't spam
+	end
+	for _, line in ipairs(lines) do
+		local low = line:lower()
+		for _, pat in ipairs(ERROR_PATTERNS) do
+			if low:find(pat, 1, true) then
+				dev_notify_cooldown = now
+				vim.notify(
+					"make dev: error detected — hit :cnext or <leader>qq",
+					vim.log.levels.ERROR
+				)
+				return
+			end
+		end
+	end
+end
+
+local function dev()
+	local existing = overseer.list_tasks({ recent_first = true })
+	for _, task in ipairs(existing) do
+		if task.name == DEV_TASK_NAME and not task:is_disposed() then
+			if task:is_running() then
+				dev_stopped_manually = true
+				task:stop()
+			else
+				dev_stopped_manually = false
+				task:restart()
+			end
+			return
+		end
+	end
+
+	dev_stopped_manually = false
+	local ok, task = pcall(overseer.new_task, {
+		cmd = { "make", "dev" },
+		name = DEV_TASK_NAME,
+		components = {
+			-- no `open`: keep focus on your buffer, errors wait in the quickfix
+			{ "on_output_quickfix", errorformat = GO_ERRFMT },
+			-- status is driven by the exit code. Don't dispose: `<leader>md`
+			-- restarts an existing task after a failure (a disposed one can't).
+			"on_exit_set_status",
+		},
+	})
+	if not ok then
+		vim.notify("make dev: failed to create task", vim.log.levels.ERROR)
+		return
+	end
+	task:subscribe("on_output_lines", dev_notify_if_error)
+	task:subscribe("on_complete", function(_, status)
+		if status ~= "FAILURE" or dev_stopped_manually then
+			return
+		end
+		vim.notify("make dev stopped — hit :cnext or <leader>qq for errors", vim.log.levels.ERROR)
+	end)
+	task:start()
+end
+
 local nmap_leader = function(suffix, rhs, desc)
 	vim.keymap.set("n", "<Leader>" .. suffix, rhs, { desc = desc })
 end
@@ -103,9 +216,7 @@ end, "make build")
 nmap_leader("mt", function()
 	make("test")
 end, "make test")
-nmap_leader("md", function()
-	make("dev")
-end, "make dev")
+nmap_leader("md", dev, "make dev (toggle persistent watcher)")
 nmap_leader("ml", function()
 	make("lint")
 end, "make lint")

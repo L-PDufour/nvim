@@ -250,11 +250,10 @@ local function smart_qf_nav(direction)
 		-- Check if quickfix window is open
 		for _, win_id in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
 			if vim.fn.getwininfo(win_id)[1].quickfix == 1 then
-				-- Quickfix is open, navigate it
-				if direction == "next" then
-					vim.cmd("cnext")
-				else
-					vim.cmd("cprevious")
+				-- Quickfix is open, navigate it (guard in case the list is empty)
+				local ok = pcall(vim.cmd, direction == "next" and "cnext" or "cprevious")
+				if not ok then
+					return
 				end
 				vim.cmd("normal! zz") -- Center screen
 				return
