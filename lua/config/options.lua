@@ -70,7 +70,6 @@ opt.foldtext = ""
 opt.iskeyword = "@,48-57,_,192-255,-"
 opt.breakindentopt = "list:-1"
 opt.formatlistpat = [[^\s*[0-9\-\+\*]\+[\.\)]*\s\+]]
-opt.colorcolumn = "+1"
 opt.shortmess = "CFOSWaco"
 
 vim.api.nvim_create_autocmd("FileType", {

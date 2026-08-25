@@ -29,6 +29,7 @@ require("config.themes") -- Vim options
 require("config.autocmds") -- Autocommands
 require("config.keymaps") -- General keymaps
 require("config.mini") -- All mini.nvim setup
+require("config.mux") -- Per-project multiplexer (server + sessions)
 require("config.lsp") -- LSP configuration
 require("config.cmp") -- Completion setup
 require("config.dap") -- DAP (debugger) setup

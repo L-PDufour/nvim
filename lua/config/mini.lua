@@ -31,8 +31,14 @@ MiniMisc.setup_termbg_sync()
 -- Notifications
 require("mini.notify").setup()
 
--- Session management
--- require("mini.sessions").setup()
+-- Session management (per-project sessions; see config/mux.lua for the
+-- multiplexer layer that drives read/write per project root)
+require("mini.sessions").setup({
+	autoread = false, -- mux drives reads per-project
+	autowrite = true, -- save layout (incl. terminals) on exit
+	directory = vim.fn.stdpath("data") .. "/sessions",
+	verbose = { read = false, write = false, delete = true },
+})
 
 -- Start screen
 -- require("mini.starter").setup()

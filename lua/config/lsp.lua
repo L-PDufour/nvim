@@ -52,6 +52,14 @@ local function js_formatters()
 end
 
 require("conform").setup({
+	formatters = {
+		-- templ binary is no longer in the flake; use the module's copy via `go tool`
+		templ = {
+			command = "go",
+			prepend_args = { "tool", "templ" },
+			cwd = require("conform.util").root_file({ "go.mod", "go.work" }),
+		},
+	},
 	formatters_by_ft = {
 		lua = { "stylua" },
 		nix = { "nixfmt" },
@@ -64,7 +72,7 @@ require("conform").setup({
 		json = js_formatters,
 		html = { "prettierd", "prettier", stop_after_first = true },
 		css = { "prettierd", "prettier", stop_after_first = true },
-		templ = { "got tool templ fmt" },
+		templ = { "templ" },
 	},
 	format_on_save = {
 		timeout_ms = 500,

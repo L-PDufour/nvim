@@ -29,6 +29,7 @@ rec {
       which-key-nvim
       flash-nvim
       base16-nvim
+      catppuccin-nvim
 
       # editing / completion
       blink-cmp
@@ -140,7 +141,10 @@ rec {
         end
       '';
     in
-    pkgs.neovim.override {
+    # neovim-nightly-overlay replaces pkgs.neovim with the (unwrapped) nightly
+    # build, so wrap it ourselves instead of pkgs.neovim.override (which would
+    # try to pass `configure` to the unwrapped derivation and fail).
+    pkgs.wrapNeovim pkgs.neovim-unwrapped {
       configure = {
         customRC =
           if embedConfig then
