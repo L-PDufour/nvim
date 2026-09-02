@@ -34,7 +34,7 @@ opt.winborder = "double"
 opt.splitbelow = true
 opt.splitright = true
 opt.splitkeep = "screen"
-opt.list = true
+opt.list = false
 opt.listchars = { tab = "> ", extends = "…", precedes = "…", nbsp = "␣" }
 opt.fillchars = { eob = " ", fold = "╌", foldinner = "│" }
 
