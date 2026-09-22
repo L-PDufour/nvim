@@ -55,10 +55,7 @@ require("dap-python").setup("python")
 require("dap-view").setup({
 	auto_toggle = true,
 	winbar = {
-		show = true,
-		show_keymap_hints = true,
-		-- Merge the terminal into the shared window instead of a second window.
-		sections = { "watches", "scopes", "exceptions", "breakpoints", "threads", "repl", "console" },
+		controls = { enabled = true },
 	},
 	windows = { position = "below", size = 0.3 },
 	virtual_text = { enabled = true, position = "eol" },

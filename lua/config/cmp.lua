@@ -44,7 +44,7 @@ cmp.setup({
 		default = { "lazydev", "lsp", "path", "snippets", "buffer" },
 		per_filetype = {
 			org = { "orgmode" },
-			["gitcommit"] = { "conventional", "buffer", "spell" },
+			["gitcommit"] = { "conventional_commits", "spell", "buffer" },
 			sql = { "dadbod", "buffer" },
 			mysql = { "dadbod", "buffer" },
 			plsql = { "dadbod", "buffer" },
@@ -60,6 +60,15 @@ cmp.setup({
 				name = "Orgmode",
 				module = "orgmode.org.autocompletion.blink",
 				fallbacks = { "buffer" },
+			},
+			conventional_commits = {
+				name = "Conventional Commits",
+				module = "blink-cmp-conventional-commits",
+				opts = { git_log_count = 200 },
+			},
+			spell = {
+				name = "Spell",
+				module = "blink-cmp-spell",
 			},
 			dadbod = {
 				name = "Dadbod",

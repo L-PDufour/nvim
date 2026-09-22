@@ -34,6 +34,8 @@ rec {
       # editing / completion
       blink-cmp
       blink-ripgrep-nvim
+      blink-cmp-conventional-commits
+      blink-cmp-spell
       friendly-snippets
       lazydev-nvim
       undotree
