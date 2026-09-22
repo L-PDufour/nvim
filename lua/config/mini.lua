@@ -194,9 +194,11 @@ local wk = require("which-key")
 wk.add({
 	{ "<Leader>a", group = "+AI" },
 	{ "<Leader>b", group = "+Buffer" },
+	{ "<Leader>d", group = "+Debug" },
 	{ "<Leader>e", group = "+Explore/Edit" },
 	{ "<Leader>f", group = "+Find" },
 	{ "<Leader>g", group = "+Git" },
+	{ "<Leader>h", group = "+Help/Docs" },
 	{ "<Leader>l", group = "+Language" },
 	{ "<Leader>m", group = "+Make/Compile" },
 	{ "<Leader>o", group = "+Other" },

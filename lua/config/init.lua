@@ -41,3 +41,4 @@ require("config.act") -- Embark-style act-at-point (g.)
 require("config.ai") -- CodeCompanion: DeepSeek chat + opencode ACP agent
 require("config.pick")
 require("config.dadbod")
+require("config.devdocs") -- DevDocs offline documentation

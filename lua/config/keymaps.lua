@@ -131,15 +131,25 @@ nmap_leader("vV", '<Cmd>lua MiniVisits.remove_label("core")<CR>', 'Remove "core"
 nmap_leader("vl", "<Cmd>lua MiniVisits.add_label()<CR>", "Add label")
 nmap_leader("vL", "<Cmd>lua MiniVisits.remove_label()<CR>", "Remove label")
 
--- d is for 'Debug' (DAP). Common usage:
--- - `<Leader>db` - toggle breakpoint
--- - `<Leader>dc` - continue/start debugging
--- - `<Leader>dt` - terminate debugging session
--- - Function keys: F5 (continue), F10 (step over), F11 (step into), F12 (step out)
+-- d is for 'Debug' (DAP). Launch configurations come from each project's
+-- .vscode/launch.json; adapters live in config/dap.lua.
 local dap = require("dap")
-local dapui = require("dapui")
-map("n", "<leader>db", dap.toggle_breakpoint, { desc = "DAP toggle breakpoint" })
-map("n", "<leader>dr", dap.repl.open, { desc = "DAP REPL" })
+map("n", "<leader>db", dap.toggle_breakpoint, { desc = "Debug: Breakpoint" })
+map("n", "<leader>dB", function()
+	dap.set_breakpoint(vim.fn.input("Condition: "))
+end, { desc = "Debug: Conditional breakpoint" })
+map("n", "<leader>dc", dap.continue, { desc = "Debug: Continue/start" })
+map("n", "<leader>dq", dap.terminate, { desc = "Debug: Terminate" })
+map("n", "<leader>di", dap.step_into, { desc = "Debug: Step into" })
+map("n", "<leader>do", dap.step_over, { desc = "Debug: Step over" })
+map("n", "<leader>dO", dap.step_out, { desc = "Debug: Step out" })
+map("n", "<leader>dr", dap.repl.open, { desc = "Debug: REPL" })
+map("n", "<leader>dv", "<Cmd>DapViewToggle<CR>", { desc = "Debug: Toggle UI" })
+map("n", "<leader>de", "<Cmd>DapViewHover<CR>", { desc = "Debug: Hover value" })
+nmap_leader("dt", require("dap-go").debug_test, "Debug: Test")
+nmap_leader("dT", require("dap-go").debug_last_test, "Debug: Last test")
+
+-- Function keys mirror the common IDE bindings.
 map("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
 map("n", "<S-F5>", dap.terminate, { desc = "Debug: Terminate" })
 map("n", "<F9>", dap.toggle_breakpoint, { desc = "Debug: Breakpoint" })
@@ -149,14 +159,6 @@ end, { desc = "Debug: Conditional breakpoint" })
 map("n", "<F10>", dap.step_over, { desc = "Debug: Step over" })
 map("n", "<F11>", dap.step_into, { desc = "Debug: Step into" })
 map("n", "<F12>", dap.step_out, { desc = "Debug: Step out" })
-
--- keep these on leader since they're less frequent
-nmap_leader("du", dapui.toggle, "DAP UI toggle")
-nmap_leader("de", function()
-	dapui.eval(nil, { enter = true })
-end, "DAP eval")
-nmap_leader("dt", require("dap-go").debug_test, "Debug test")
-nmap_leader("dT", require("dap-go").debug_last_test, "Debug last test")
 
 -- stylua: ignore end
 -- Override the mappings after setup

@@ -3,13 +3,14 @@ vim.lsp.enable({
 	"golangci_lint_ls",
 	"gopls",
 	"html",
-	"denolsp",
 	"pyright",
 	"templ",
 	"clangd",
 	"nixd",
 	"tailwindcss",
 	"cssls",
+	"tsc",
+	"biome",
 })
 
 vim.lsp.config("*", {
@@ -40,17 +41,6 @@ vim.diagnostic.config({
 })
 
 -- Formatting
-local function is_deno_project()
-	return vim.fs.root(0, { "deno.json", "deno.jsonc", "deno.lock" }) ~= nil
-end
-
-local function js_formatters()
-	if is_deno_project() then
-		return { "deno_fmt" }
-	end
-	return { "prettierd", "prettier", stop_after_first = true }
-end
-
 require("conform").setup({
 	formatters = {
 		-- templ binary is no longer in the flake; use the module's copy via `go tool`
@@ -65,13 +55,16 @@ require("conform").setup({
 		nix = { "nixfmt" },
 		go = { "gofumpt" },
 		python = { "black" },
-		typescript = js_formatters,
-		typescriptreact = js_formatters,
-		javascript = js_formatters,
-		javascriptreact = js_formatters,
-		json = js_formatters,
-		html = { "prettierd", "prettier", stop_after_first = true },
-		css = { "prettierd", "prettier", stop_after_first = true },
+		-- biome is the only web formatter: it picks up the project's
+		-- biome.json when present, otherwise formats with its defaults.
+		typescript = { "biome" },
+		typescriptreact = { "biome" },
+		javascript = { "biome" },
+		javascriptreact = { "biome" },
+		json = { "biome" },
+		jsonc = { "biome" },
+		css = { "biome" },
+		html = { "biome" },
 		templ = { "templ" },
 	},
 	format_on_save = {
@@ -80,14 +73,11 @@ require("conform").setup({
 	},
 })
 
--- Linting
+-- Linting: JS/TS diagnostics come from the biome LSP, so nvim-lint only
+-- covers python here.
 local lint = require("lint")
 
 lint.linters_by_ft = {
-	javascript = { "eslint_d" },
-	javascriptreact = { "eslint_d" },
-	typescript = { "eslint_d" },
-	typescriptreact = { "eslint_d" },
 	python = { "ruff" },
 }
 
@@ -97,14 +87,6 @@ vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
 		if vim.api.nvim_buf_get_name(0) == "" then
 			return
 		end
-		local ft = vim.bo.filetype
-		-- deno handled by LSP, skip eslint_d for deno projects
-		if vim.tbl_contains({ "javascript", "javascriptreact", "typescript", "typescriptreact" }, ft) then
-			if not is_deno_project() then
-				lint.try_lint()
-			end
-		else
-			lint.try_lint()
-		end
+		lint.try_lint()
 	end,
 })

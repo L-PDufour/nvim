@@ -44,13 +44,10 @@ rec {
 
       # dap
       nvim-dap
-      nvim-dap-ui
+      nvim-dap-view
       nvim-nio
       nvim-dap-go
-      nvim-dap-lldb
-      nvim-dap-vscode-js
       nvim-dap-python
-      nvim-dap-virtual-text
 
       # db
       vim-dadbod
@@ -91,10 +88,10 @@ rec {
       # fallback has known performance issues)
       inotify-tools
 
-      # formatters (conform)
+      # formatters / linters (conform + nvim-lint)
       stylua
       black
-      prettierd
+      biome
       templ
       gofumpt
       nixfmt
@@ -109,7 +106,8 @@ rec {
       lua-language-server
       nixd
       marksman
-      # project-sensitive servers (gopls, clangd, rust-analyzer, ts_ls, pyright)
+      # TypeScript 7 native compiler: provides `tsc --lsp --stdio` on PATH
+      # project-sensitive servers (gopls, clangd, rust-analyzer, pyright)
       # come from project devShells
     ];
 
@@ -156,10 +154,13 @@ rec {
               luafile ${liveInit}
             '';
         packages.main.start =
-          mkNeovimPlugins { inherit system; }
-          ++ pkgs.lib.optional embedConfig configPlugin;
+          mkNeovimPlugins { inherit system; } ++ pkgs.lib.optional embedConfig configPlugin;
       };
-      extraMakeWrapperArgs = ''--suffix PATH : "${pkgs.lib.makeBinPath (mkExtraPackages { inherit system; })}"'';
+      extraMakeWrapperArgs = ''--suffix PATH : "${
+        pkgs.lib.makeBinPath (mkExtraPackages {
+          inherit system;
+        })
+      }"'';
       withPython3 = false;
       withNodeJs = false;
       withRuby = false;

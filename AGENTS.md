@@ -30,22 +30,33 @@ live config, this checkout) and `embedConfig=true` (standalone snapshot).
   files returned as `vim.lsp.Config` tables (auto-loaded by enabled name).
   Buffer-agnostic defaults use `vim.lsp.config("*")` in `lsp.lua`. Conform
   (formatters) and nvim-lint config also live in `lsp.lua`.
-- **Project-sensitive servers** (gopls, clangd, ts_ls, pyright, rust-analyzer)
-  are *not* installed here — they come from each project's own devShell. Only
-  editor-adjacent servers (lua, nixd, marksman) ship with nvim. Don't add
-  project LSP binaries to `mkExtraPackages`.
+- **Project-sensitive servers** (gopls, clangd, pyright, rust-analyzer) are
+  *not* installed here — they come from each project's own devShell. Only
+  editor-adjacent servers (lua, nixd, marksman, and the TS7 native `tsc`
+  from `typescript-go`) ship with nvim. Don't add project LSP binaries to
+  `mkExtraPackages`.
 
 ## Formatting / linting / diagnostics
 
-- Formatters via conform on save: `lua`→stylua, `nix`→nixfmt, `go`→gofumpt,
-  `python`→black, JS/TS→prettierd, `templ`→templ. Linters via nvim-lint:
-  eslint_d (JS/TS, skipped for deno projects) and ruff (python). All binaries
-  provided by the Nix wrapper PATH.
+- Formatting via conform on save: `lua`→stylua, `nix`→nixfmt, `go`→gofumpt,
+  `python`→black, JS/TS/JSON/CSS/HTML→biome, `templ`→templ. JS/TS diagnostics
+  come from the `biome` LSP (`biome lsp-proxy`); nvim-lint only runs ruff for
+  python. All binaries provided by the Nix wrapper PATH (`biome` and
+  `typescript-go` are in `mkExtraPackages`).
 - Format Lua with `stylua` (already on PATH). `.luarc.json` configures
   lua-language-server (LuaJIT runtime, `diagnostics.globals` = vim/map/require).
 - `git`-formatting of Nix files uses alejandra (`nix fmt`, flake formatter),
   and the dev shell provides `just`. `.gitignore` excludes `after/syntax`
   (generated), `/.direnv`, `/result`.
+
+## Debugging
+
+- `lua/config/dap.lua` declares **adapters only**; launch configurations come
+  from each project's `.vscode/launch.json`, read automatically by nvim-dap
+  (`:help dap-providers`). The UI is `nvim-dap-view` (single shared window,
+  winbar keymap hints); Go/Python defaults come from `nvim-dap-go` /
+  `nvim-dap-python`. C/C++ uses `lldb-dap` (from the `lldb` Nix package);
+  JS/TS uses `js-debug` (`pwa-node`/`pwa-chrome`/`node`/`chrome`).
 
 ## AI config
 
@@ -64,6 +75,8 @@ live config, this checkout) and `embedConfig=true` (standalone snapshot).
   changes require the matching autocmd, not manual requires.
 - Emacs-style workflows (`:Compile`/`:Recompile`, scratch buffers,
   embark-act at `g.`) are defined in `lua/config/{compile,snacks,act}.lua`.
+- Offline docs: `lua/config/devdocs.lua` sets up `devdocs.nvim`
+  (`<leader>h` group); docs download to `stdpath("data")/devdocs`.
 - Hotpot/Fennel is an optional future add-on: requires uncommenting
   `hotpot-nvim` in `mkNeovimPlugins` + a rebuild, then `require("hotpot")`
   at the top of `init.lua`; `.fnl` files compile on the fly.
