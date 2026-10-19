@@ -31,15 +31,6 @@ MiniMisc.setup_termbg_sync()
 -- Notifications
 require("mini.notify").setup()
 
--- Session management (per-project sessions; see config/mux.lua for the
--- multiplexer layer that drives read/write per project root)
-require("mini.sessions").setup({
-	autoread = false, -- mux drives reads per-project
-	autowrite = true, -- save layout (incl. terminals) on exit
-	directory = vim.fn.stdpath("data") .. "/sessions",
-	verbose = { read = false, write = false, delete = true },
-})
-
 -- Start screen
 -- require("mini.starter").setup()
 
@@ -112,9 +103,6 @@ local add_marks = function()
 	MiniFiles.set_bookmark("w", vim.fn.getcwd, { desc = "Working directory" })
 end
 _G.Config.autocmd("User", "MiniFilesExplorerOpen", add_marks, "Add bookmarks")
-
--- Visits tracking
-require("mini.visits").setup()
 
 -- ============================================================================
 -- Git
@@ -203,9 +191,7 @@ wk.add({
 	{ "<Leader>m", group = "+Make/Compile" },
 	{ "<Leader>o", group = "+Other" },
 	{ "<Leader>q", group = "+Quickfix" },
-	{ "<Leader>s", group = "+Session" },
 	{ "<Leader>t", group = "+Terminal" },
-	{ "<Leader>v", group = "+Visits" },
 	{
 		mode = { "n", "x" },
 		{ "<Leader>g", group = "+Git" },

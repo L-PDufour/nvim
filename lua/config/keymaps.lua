@@ -110,26 +110,6 @@ nmap_leader("ot", "<Cmd>lua MiniTrailspace.trim()<CR>", "Trim trailspace")
 nmap_leader("oz", "<Cmd>lua MiniMisc.zoom()<CR>", "Zoom toggle")
 
 nmap_leader("ut", "<Cmd>UndotreeToggle<CR><Cmd>UndotreeFocus<CR>", "Undo tree")
--- v is for 'Visits'. Common usage:
--- - `<Leader>vv` - add    "core" label to current file.
--- - `<Leader>vV` - remove "core" label to current file.
--- - `<Leader>vc` - pick among all files with "core" label.
-local MiniVisits = require("mini.visits")
-local MiniExtra = require("mini.extra")
-local make_pick_core = function(cwd, desc)
-	return function()
-		local sort_latest = MiniVisits.gen_sort.default({ recency_weight = 1 })
-		local local_opts = { cwd = cwd, filter = "core", sort = sort_latest }
-		MiniExtra.pickers.visit_paths(local_opts, { source = { name = desc } })
-	end
-end
-
-nmap_leader("vc", make_pick_core("", "Core visits (all)"), "Core visits (all)")
-nmap_leader("vC", make_pick_core(nil, "Core visits (cwd)"), "Core visits (cwd)")
-nmap_leader("vv", '<Cmd>lua MiniVisits.add_label("core")<CR>', 'Add "core" label')
-nmap_leader("vV", '<Cmd>lua MiniVisits.remove_label("core")<CR>', 'Remove "core" label')
-nmap_leader("vl", "<Cmd>lua MiniVisits.add_label()<CR>", "Add label")
-nmap_leader("vL", "<Cmd>lua MiniVisits.remove_label()<CR>", "Remove label")
 
 -- d is for 'Debug' (DAP). Launch configurations come from each project's
 -- .vscode/launch.json; adapters live in config/dap.lua.
