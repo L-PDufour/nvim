@@ -24,6 +24,7 @@ rec {
       # core
       plenary-nvim
       nvim-treesitter.withAllGrammars
+      nvim-treesitter-textobjects
       mini-nvim
       snacks-nvim
       which-key-nvim
