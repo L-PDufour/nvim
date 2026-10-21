@@ -88,7 +88,7 @@ end
 ---@type vim.lsp.Config
 return {
 	cmd = { "gopls" },
-	filetypes = { "go", "gomod", "gowork", "gotmpl" },
+	filetypes = { "go", "gomod", "gowork" },
 	capabilities = {
 		workspace = {
 			didChangeWatchedFiles = {
@@ -104,7 +104,6 @@ return {
 	end,
 	settings = {
 		gopls = {
-			templateExtensions = { "templ" },
 			gofumpt = true,
 			usePlaceholders = true,
 			directoryFilters = {

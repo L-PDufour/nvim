@@ -140,7 +140,7 @@ local function dev_notify_if_error(task, lines)
 	if dev_stopped_manually then
 		return
 	end
-	local now = vim.loop.now()
+	local now = vim.uv.now()
 	if now - dev_notify_cooldown < 5000 then
 		return -- still inside a burst; don't spam
 	end

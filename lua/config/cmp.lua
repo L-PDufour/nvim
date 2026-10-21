@@ -5,7 +5,6 @@ lazydev.setup({
 	library = {
 		{ path = "luvit-meta/library", words = { "vim%.uv" } },
 	},
-	ft = "lua",
 })
 cmp.setup({
 	keymap = {
@@ -17,29 +16,18 @@ cmp.setup({
 		},
 	},
 	appearance = {
-		use_nvim_cmp_as_default = false,
 		nerd_font_variant = "mono",
 	},
 	completion = {
-		accept = {
-			auto_brackets = {
-				enabled = true,
-			},
-		},
-
 		documentation = {
 			auto_show = true,
 			auto_show_delay_ms = 200,
-		},
-		ghost_text = {
-			enabled = vim.g.ai_cmp,
 		},
 	},
 	cmdline = {
 		keymap = { preset = "inherit" },
 		completion = { menu = { auto_show = true } },
 	},
-	snippets = { preset = "default" },
 	sources = {
 		default = { "lazydev", "lsp", "path", "snippets", "buffer" },
 		per_filetype = {
@@ -50,12 +38,6 @@ cmp.setup({
 			plsql = { "dadbod", "buffer" },
 		},
 		providers = {
-			snippets = {
-				opts = {
-					friendly_snippets = true,
-					search_paths = { vim.fn.stdpath("config") .. "/snippets" },
-				},
-			},
 			orgmode = {
 				name = "Orgmode",
 				module = "orgmode.org.autocompletion.blink",
@@ -101,7 +83,6 @@ cmp.setup({
 		},
 	},
 
-	fuzzy = { implementation = "prefer_rust_with_warning" },
 	-- experimental signature help support
 	signature = { enabled = true },
 })

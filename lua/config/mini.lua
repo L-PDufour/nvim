@@ -35,7 +35,42 @@ require("mini.notify").setup()
 -- require("mini.starter").setup()
 
 -- Statusline
-require("mini.statusline").setup()
+local MiniStatusline = require("mini.statusline")
+MiniStatusline.setup({
+	content = {
+		active = function()
+			local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
+			local rec = vim.fn.reg_recording()
+			if rec ~= "" then
+				mode_hl = "MiniStatuslineModeReplace"
+			end
+			local git = MiniStatusline.section_git({ trunc_width = 40 })
+			local diff = MiniStatusline.section_diff({ trunc_width = 75 })
+			local lsp = MiniStatusline.section_lsp({ trunc_width = 40 })
+			local filename = MiniStatusline.section_filename({ trunc_width = 140 })
+			local fileinfo = MiniStatusline.section_fileinfo({ trunc_width = 120 })
+			local location = MiniStatusline.section_location({ trunc_width = 75 })
+			local search = MiniStatusline.section_searchcount({ trunc_width = 75 })
+
+			local groups = {
+				{ hl = mode_hl, strings = { mode } },
+			}
+			if rec ~= "" then
+				table.insert(groups, { hl = "MiniStatuslineModeReplace", strings = { "● REC @" .. rec } })
+			end
+			vim.list_extend(groups, {
+				{ hl = "MiniStatuslineDevinfo", strings = { git, diff, vim.diagnostic.status(0), lsp } },
+				"%<",
+				{ hl = "MiniStatuslineFilename", strings = { filename } },
+				"%=",
+				{ hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+				{ hl = mode_hl, strings = { search, location } },
+			})
+
+			return MiniStatusline.combine_groups(groups)
+		end,
+	},
+})
 
 -- ============================================================================
 -- Text Objects & Motions

@@ -43,7 +43,7 @@ vim.diagnostic.config({
 -- Formatting
 require("conform").setup({
 	formatters = {
-		-- templ binary is no longer in the flake; use the module's copy via `go tool`
+		-- Use the project-pinned binary (requires the `go get -tool` directive).
 		templ = {
 			command = "go",
 			prepend_args = { "tool", "templ" },

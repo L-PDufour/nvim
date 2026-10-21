@@ -5,8 +5,18 @@
 -- HIGHLIGHT ON YANK
 -- ============================================================================
 Config.autocmd("TextYankPost", nil, function()
-	vim.hl.on_yank({ timeout = 200 })
+	vim.hl.hl_op({ timeout = 200 })
 end, "Highlight yanked text")
+
+Config.autocmd("RecordingEnter", nil, function()
+	vim.cmd("redrawstatus")
+end, "Show macro recording indicator")
+
+Config.autocmd("RecordingLeave", nil, function()
+	vim.schedule(function()
+		vim.cmd("redrawstatus")
+	end)
+end, "Hide macro recording indicator")
 
 -- ============================================================================
 -- FORMAT OPTIONS

@@ -30,19 +30,18 @@ live config, this checkout) and `embedConfig=true` (standalone snapshot).
   files returned as `vim.lsp.Config` tables (auto-loaded by enabled name).
   Buffer-agnostic defaults use `vim.lsp.config("*")` in `lsp.lua`. Conform
   (formatters) and nvim-lint config also live in `lsp.lua`.
-- **Project-sensitive servers** (gopls, clangd, pyright, rust-analyzer) are
-  *not* installed here — they come from each project's own devShell. Only
-  editor-adjacent servers (lua, nixd, marksman, and the TS7 native `tsc`
-  from `typescript-go`) ship with nvim. Don't add project LSP binaries to
-  `mkExtraPackages`.
+- **Project-sensitive servers** (gopls, clangd, pyright, rust-analyzer, `tsc`)
+  are *not* installed here — they come from each project's own devShell. Only
+  editor-adjacent servers (lua, nixd, marksman) ship with nvim. Don't add
+  project LSP binaries to `mkExtraPackages`.
 
 ## Formatting / linting / diagnostics
 
 - Formatting via conform on save: `lua`→stylua, `nix`→nixfmt, `go`→gofumpt,
   `python`→black, JS/TS/JSON/CSS/HTML→biome, `templ`→templ. JS/TS diagnostics
   come from the `biome` LSP (`biome lsp-proxy`); nvim-lint only runs ruff for
-  python. All binaries provided by the Nix wrapper PATH (`biome` and
-  `typescript-go` are in `mkExtraPackages`).
+  python. All binaries provided by the Nix wrapper PATH (`biome` is in
+  `mkExtraPackages`).
 - Format Lua with `stylua` (already on PATH). `.luarc.json` configures
   lua-language-server (LuaJIT runtime, `diagnostics.globals` = vim/map/require).
 - `git`-formatting of Nix files uses alejandra (`nix fmt`, flake formatter),

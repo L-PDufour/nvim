@@ -25,6 +25,7 @@ rec {
       plenary-nvim
       nvim-treesitter.withAllGrammars
       nvim-treesitter-textobjects
+      nvim-treesitter-context
       mini-nvim
       snacks-nvim
       which-key-nvim
@@ -109,8 +110,7 @@ rec {
       lua-language-server
       nixd
       marksman
-      # TypeScript 7 native compiler: provides `tsc --lsp --stdio` on PATH
-      # project-sensitive servers (gopls, clangd, rust-analyzer, pyright)
+      # project-sensitive servers (gopls, clangd, tsc, rust-analyzer, pyright)
       # come from project devShells
     ];
 

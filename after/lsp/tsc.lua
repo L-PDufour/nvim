@@ -3,7 +3,8 @@
 --- https://github.com/microsoft/typescript
 ---
 --- TypeScript 7.0+ native compiler, started as `tsc --lsp --stdio`.
---- The `tsc` binary is provided on `$PATH` by the flake (typescript-go).
+--- The `tsc` binary comes from the project devShell (typescript 7 /
+--- typescript-go), not the nvim wrapper.
 ---
 --- ### Monorepo support
 ---

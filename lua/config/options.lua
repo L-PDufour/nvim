@@ -6,7 +6,7 @@ local opt = vim.opt
 
 -- General
 opt.mouse = "a"
-opt.mousescroll = "ver:25,hor:6"
+opt.mousescroll = "ver:5,hor:6"
 opt.undofile = true
 opt.swapfile = false
 opt.backup = false
@@ -37,8 +37,6 @@ opt.splitkeep = "screen"
 opt.list = false
 opt.listchars = { tab = "> ", extends = "…", precedes = "…", nbsp = "␣" }
 opt.fillchars = { eob = " ", fold = "╌", foldinner = "│" }
-
-opt.fillchars:append({ foldinner = "│" })
 -- Editing
 opt.expandtab = true
 opt.tabstop = 2
@@ -48,7 +46,6 @@ opt.autoindent = true
 opt.smartindent = true
 opt.virtualedit = "block"
 opt.formatoptions = "rqnl1j"
-opt.iskeyword:append("-")
 
 -- Search
 opt.ignorecase = true
@@ -70,7 +67,7 @@ opt.foldtext = ""
 opt.iskeyword = "@,48-57,_,192-255,-"
 opt.breakindentopt = "list:-1"
 opt.formatlistpat = [[^\s*[0-9\-\+\*]\+[\.\)]*\s\+]]
-opt.shortmess = "CFOSWaco"
+opt.shortmess = "ltToOCF"
 
 vim.api.nvim_create_autocmd("FileType", {
 	callback = function()
