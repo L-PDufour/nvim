@@ -18,6 +18,10 @@ cmp.setup({
 	appearance = {
 		nerd_font_variant = "mono",
 	},
+	-- No prebuilt fuzzy library for OpenBSD, and building it needs a Rust
+	-- toolchain: use the pure-Lua matcher everywhere so behaviour is identical
+	-- on Nix and non-Nix installs.
+	fuzzy = { implementation = "lua" },
 	completion = {
 		documentation = {
 			auto_show = true,

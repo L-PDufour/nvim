@@ -1,5 +1,6 @@
 -- DevDocs: offline documentation browser (maskudo/devdocs.nvim).
--- jq, curl and pandoc are provided on PATH by the Nix wrapper.
+-- jq, curl and pandoc come from the Nix wrapper on Linux and from ports on
+-- OpenBSD.
 require("devdocs").setup({
 	ensure_installed = {
 		"go",

@@ -9,45 +9,60 @@ local dap = require("dap")
 -- ============================================================================
 -- JavaScript / TypeScript (vscode-js-debug)
 -- ============================================================================
-local js_debug_adapter = {
-	type = "server",
-	host = "localhost",
-	port = "${port}",
-	executable = {
-		command = "js-debug",
-		args = { "${port}" },
-	},
-}
+-- Only register adapters when the adapter binary exists: on a non-Nix install
+-- (OpenBSD) js-debug may not be installed, and launching would fail anyway.
+if vim.fn.executable("js-debug") == 1 then
+	local js_debug_adapter = {
+		type = "server",
+		host = "localhost",
+		port = "${port}",
+		executable = {
+			command = "js-debug",
+			args = { "${port}" },
+		},
+	}
 
-dap.adapters["pwa-node"] = js_debug_adapter
-dap.adapters["pwa-chrome"] = js_debug_adapter
--- VS Code launch.json also uses the short names.
-dap.adapters.node = js_debug_adapter
-dap.adapters.chrome = js_debug_adapter
+	dap.adapters["pwa-node"] = js_debug_adapter
+	dap.adapters["pwa-chrome"] = js_debug_adapter
+	-- VS Code launch.json also uses the short names.
+	dap.adapters.node = js_debug_adapter
+	dap.adapters.chrome = js_debug_adapter
+end
 
 -- ============================================================================
 -- C / C++ (LLVM's lldb-dap, provided by the `lldb` Nix package)
 -- ============================================================================
-dap.adapters.lldb = {
-	type = "executable",
-	command = "lldb-dap",
-	name = "lldb",
-}
+if vim.fn.executable("lldb-dap") == 1 then
+	dap.adapters.lldb = {
+		type = "executable",
+		command = "lldb-dap",
+		name = "lldb",
+	}
+end
 
 -- ============================================================================
 -- Go (delve) and Python (debugpy)
 -- ============================================================================
-require("dap-go").setup({
-	delve = {
-		path = "dlv",
-		initialize_timeout_sec = 20,
-		port = "${port}",
-		args = {},
-		build_flags = "",
-		detached = vim.fn.has("win32") == 0,
-	},
-})
-require("dap-python").setup("python")
+-- pcall: the adapter plugins are optional on machines without the debuggers,
+-- where a hard error at startup would abort this whole module.
+local ok_go, dap_go = pcall(require, "dap-go")
+if ok_go then
+	dap_go.setup({
+		delve = {
+			path = "dlv",
+			initialize_timeout_sec = 20,
+			port = "${port}",
+			args = {},
+			build_flags = "",
+			detached = vim.fn.has("win32") == 0,
+		},
+	})
+end
+
+local ok_py, dap_python = pcall(require, "dap-python")
+if ok_py then
+	dap_python.setup("python")
+end
 
 -- ============================================================================
 -- Debug UI (nvim-dap-view)
