@@ -18,13 +18,32 @@ rebuild there.
 `lib/default.nix` `mkNeovim` has two modes: `embedConfig=false` (default =
 live config, this checkout) and `embedConfig=true` (standalone snapshot).
 
+### Non-Nix installs (OpenBSD)
+
+The same Lua also runs where there is no Nix. On startup `lua/config/init.lua`
+checks `vim.g.nix_managed`:
+
+- set by the Nix wrapper (`lib/default.nix`, both `liveInit` and the
+  `embedConfig` branch) → plugins come from `packages.main.start`, nothing else
+  happens;
+- unset (OpenBSD, plain `nvim`) → `lua/plugins.lua` installs the same plugin
+  set with Neovim 0.12's built-in `vim.pack`, pinned by `nvim-pack-lock.json`.
+
+`lua/plugins.lua` mirrors `mkNeovimPlugins` in `lib/default.nix`; **keep the
+two lists in sync**. Nix stays in charge on Linux (nothing is pruned from
+there yet). Because ports differ from the wrapper's PATH, `lsp.lua` prunes LSP
+servers/formatters/linters whose binaries are missing, `dap.lua` skips adapters
+that are not installed, and treesitter parsers are only installed when the
+`tree-sitter` CLI exists (otherwise highlighting falls back to regex).
+
 ## Layout / wiring
 
 - `init.lua` → `require("config")` → `lua/config/init.lua`, which sets the
   leader and `_G.Config` (with a shared autocmd helper) and loads modules in a
   fixed order at lines 26-42. **New feature modules must be `require`d there**
-  (or pulled in via lazydev/plenary — there is no lazy loader; plugins come
-  preloaded from Nix). A new `lua/config/<name>.lua` is *not* loaded by path.
+  (or pulled in via lazydev/plenary — there is no lazy loader; plugins are
+  preloaded from Nix, or by `vim.pack` on non-Nix installs). A new
+  `lua/config/<name>.lua` is *not* loaded by path.
 - **LSP split**: `lua/config/lsp.lua` calls `vim.lsp.enable({...})` with the
   server names. Per-server settings go in matching `after/lsp/<name>.lua`
   files returned as `vim.lsp.Config` tables (auto-loaded by enabled name).

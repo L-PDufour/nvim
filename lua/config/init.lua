@@ -5,6 +5,17 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Plugin bootstrap. On the Nix-wrapped install the plugins are already on the
+-- runtimepath and the wrapper sets vim.g.nix_managed, so vim.pack is skipped.
+-- Everywhere else (e.g. OpenBSD) vim.pack installs them from nvim-pack-lock.json.
+if not vim.g.nix_managed then
+	-- If the download failed, the modules below cannot load anyway; the
+	-- notification from plugins.setup holds the actual error.
+	if not require("plugins").setup() then
+		return
+	end
+end
+
 -- Create global config table for sharing data between modules
 _G.Config = {
 	-- Helper for creating autocommands with consistent group

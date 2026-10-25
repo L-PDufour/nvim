@@ -132,6 +132,9 @@ rec {
       # lua/, after/ and plugin/ resolve natively and only init.lua needs
       # to be loaded by hand.
       liveInit = pkgs.writeText "live-init.lua" ''
+        -- Plugins come from the store (packages.main.start); tell init.lua to
+        -- skip the vim.pack bootstrap that non-Nix installs (OpenBSD) use.
+        vim.g.nix_managed = true
         local user_init = vim.fn.stdpath("config") .. "/init.lua"
         if vim.fn.filereadable(user_init) == 1 then
           dofile(user_init)
@@ -150,6 +153,7 @@ rec {
         customRC =
           if embedConfig then
             ''
+              vim.g.nix_managed = true
               luafile ${configPlugin}/init.lua
             ''
           else
