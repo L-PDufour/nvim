@@ -17,11 +17,11 @@
 -- denotes global and uppercase - local.
 -- Example: `<Leader>fs` / `<Leader>fS` - find workspace/document LSP symbols.
 --
--- Many of the mappings use 'mini.nvim' modules set up in 'plugin/30_mini.lua'.
+-- UI actions use 'snacks.nvim' (config/snacks.lua, config/pick.lua); the
+-- remaining 'mini.nvim' modules live in config/mini.lua.
 
--- Create a global table with information about Leader groups in certain modes.
--- This is used to provide 'mini.clue' with extra clues.
--- Add an entry if you create a new group.
+-- Leader group descriptions for which-key are registered in config/mini.lua.
+-- Add an entry there if you create a new group.
 
 local function map(mode, lhs, rhs, opts)
 	opts = opts or {}
@@ -43,10 +43,18 @@ end
 -- (`<Leader>bs`/`<Leader>bS` — persistent scratch buffers — live in
 -- config/snacks.lua)
 nmap_leader("ba", "<Cmd>b#<CR>", "Alternate")
-nmap_leader("bd", "<Cmd>lua MiniBufremove.delete()<CR>", "Delete")
-nmap_leader("bD", "<Cmd>lua MiniBufremove.delete(0, true)<CR>", "Delete!")
-nmap_leader("bw", "<Cmd>lua MiniBufremove.wipeout()<CR>", "Wipeout")
-nmap_leader("bW", "<Cmd>lua MiniBufremove.wipeout(0, true)<CR>", "Wipeout!")
+nmap_leader("bd", function()
+	Snacks.bufdelete()
+end, "Delete")
+nmap_leader("bD", function()
+	Snacks.bufdelete({ force = true })
+end, "Delete!")
+nmap_leader("bw", function()
+	Snacks.bufdelete({ wipe = true })
+end, "Wipeout")
+nmap_leader("bW", function()
+	Snacks.bufdelete({ force = true, wipe = true })
+end, "Wipeout!")
 
 -- e is for 'Explore' and 'Edit'. Common usage:
 -- - `<Leader>ed` - open explorer at current working directory
@@ -56,7 +64,14 @@ nmap_leader("bW", "<Cmd>lua MiniBufremove.wipeout(0, true)<CR>", "Wipeout!")
 local edit_plugin_file = function(filename)
 	return string.format("<Cmd>edit %s/plugin/%s<CR>", vim.fn.stdpath("config"), filename)
 end
-local explore_at_file = "<Cmd>lua MiniFiles.open(vim.api.nvim_buf_get_name(0))<CR>"
+local function explore_at_file()
+	local buf = vim.api.nvim_get_current_buf()
+	if vim.api.nvim_buf_get_name(buf) == "" then
+		Snacks.explorer()
+	else
+		Snacks.explorer.reveal({ buf = buf })
+	end
+end
 local explore_quickfix = function()
 	for _, win_id in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
 		if vim.fn.getwininfo(win_id)[1].quickfix == 1 then
@@ -68,38 +83,100 @@ end
 
 nmap_leader("ef", explore_at_file, "File directory")
 nmap_leader("ei", "<Cmd>edit $MYVIMRC<CR>", "init.lua")
-nmap_leader("en", "<Cmd>lua MiniNotify.show_history()<CR>", "Notifications")
+nmap_leader("en", function()
+	Snacks.picker.notifications()
+end, "Notifications")
 nmap_leader("eq", explore_quickfix, "Quickfix")
 
-local git_log_cmd = [[Git log --pretty=format:\%h\ \%as\ │\ \%s --topo-order]]
-local git_log_buf_cmd = git_log_cmd .. " --follow -- %"
+-- Git (snacks pickers + lazygit; there is no `:Git` command any more).
+local function git_diff_buffer(staged)
+	local file = vim.api.nvim_buf_get_name(0)
+	if file == "" then
+		return vim.notify("Not a file buffer", vim.log.levels.WARN)
+	end
+	-- `staged = false` stops the finder from adding a second (unstaged)
+	-- pass; `--cached` is passed explicitly so it lands before `--`.
+	local args = { "--", file }
+	if staged then
+		table.insert(args, 1, "--cached")
+	end
+	Snacks.picker.git_diff({ staged = false, cmd_args = args })
+end
 
-nmap_leader("gc", "<Cmd>Git commit<CR>", "Commit")
-nmap_leader("ga", "<Cmd>Git commit --amend<CR>", "Commit amend")
-nmap_leader("gd", "<Cmd>Git diff<CR>", "Diff")
-nmap_leader("gt", "<Cmd>Git diff -- %<CR>", "Diff this buffer")
-nmap_leader("gs", "<Cmd>lua MiniGit.show_at_cursor()<CR>", "Show at cursor")
+nmap_leader("gg", function()
+	Snacks.lazygit()
+end, "Lazygit")
+nmap_leader("gc", function()
+	Snacks.lazygit()
+end, "Commit (lazygit)")
+nmap_leader("ga", function()
+	Snacks.lazygit()
+end, "Commit amend (lazygit)")
+nmap_leader("gd", function()
+	Snacks.picker.git_diff()
+end, "Diff (all)")
+nmap_leader("gt", function()
+	git_diff_buffer(false)
+end, "Diff this buffer")
+nmap_leader("gs", function()
+	Snacks.picker.git_log_line()
+end, "Show at cursor")
+nmap_leader("gB", function()
+	Snacks.gitbrowse()
+end, "Open in browser")
 nmap_leader("go", "<Cmd>lua MiniDiff.toggle_overlay()<CR>", "Toggle overlay")
 
--- Git hunks (using mini.pick)
-nmap_leader("gh", "<Cmd>Pick git_hunks<CR>", "Hunks modified (all)")
-nmap_leader("gk", '<Cmd>Pick git_hunks path="%"<CR>', "Hunks modified (buffer)")
-nmap_leader("gl", '<Cmd>Pick git_hunks scope="staged"<CR>', "Hunks staged (all)")
-nmap_leader("g;", '<Cmd>Pick git_hunks path="%" scope="staged"<CR>', "Hunks staged (buffer)")
+-- Git hunks
+nmap_leader("gh", function()
+	Snacks.picker.git_diff()
+end, "Hunks modified (all)")
+nmap_leader("gk", function()
+	git_diff_buffer(false)
+end, "Hunks modified (buffer)")
+nmap_leader("gl", function()
+	Snacks.picker.git_diff({ staged = true })
+end, "Hunks staged (all)")
+nmap_leader("g;", function()
+	git_diff_buffer(true)
+end, "Hunks staged (buffer)")
 
--- Git commits (using mini.pick)
-nmap_leader("gf", "<Cmd>Pick git_commits<CR>", "Commits (all)")
-nmap_leader("gj", '<Cmd>Pick git_commits path="%"<CR>', "Commits (buffer)")
+-- Git commits
+nmap_leader("gf", function()
+	Snacks.picker.git_log()
+end, "Commits (all)")
+nmap_leader("gj", function()
+	Snacks.picker.git_log_file()
+end, "Commits (buffer)")
 
--- Git log (using mini.git)
-nmap_leader("gn", "<Cmd>" .. git_log_cmd .. "<CR>", "Log (all)")
-nmap_leader("gm", "<Cmd>" .. git_log_buf_cmd .. "<CR>", "Log (buffer)")
+-- Git log
+nmap_leader("gn", function()
+	Snacks.picker.git_log()
+end, "Log (all)")
+nmap_leader("gm", function()
+	Snacks.picker.git_log_file()
+end, "Log (buffer)")
 
 -- Git staged diff
-nmap_leader("gp", "<Cmd>Git diff --cached<CR>", "Staged diff (all)")
-nmap_leader("gu", "<Cmd>Git diff --cached -- %<CR>", "Staged diff (buffer)")
+nmap_leader("gp", function()
+	Snacks.picker.git_diff({ staged = true })
+end, "Staged diff (all)")
+nmap_leader("gu", function()
+	git_diff_buffer(true)
+end, "Staged diff (buffer)")
 
-xmap_leader("gs", "<Cmd>lua MiniGit.show_at_cursor()<CR>", "Show at selection")
+xmap_leader("gs", function()
+	local start_line, end_line = vim.fn.line("v"), vim.fn.line(".")
+	if start_line > end_line then
+		start_line, end_line = end_line, start_line
+	end
+	local file = vim.api.nvim_buf_get_name(0)
+	if file == "" then
+		return vim.notify("Not a file buffer", vim.log.levels.WARN)
+	end
+	Snacks.picker.git_log({
+		cmd_args = { "-L", string.format("%d,%d:%s", start_line, end_line, file) },
+	})
+end, "Show at selection")
 
 -- local formatting_cmd = '<Cmd>lua require("conform").format({lsp_fallback=true})<CR>'
 
@@ -107,7 +184,9 @@ xmap_leader("gs", "<Cmd>lua MiniGit.show_at_cursor()<CR>", "Show at selection")
 -- - `<Leader>oz` - toggle between "zoomed" and regular view of current buffer
 nmap_leader("or", "<Cmd>lua MiniMisc.resize_window()<CR>", "Resize to default width")
 nmap_leader("ot", "<Cmd>lua MiniTrailspace.trim()<CR>", "Trim trailspace")
-nmap_leader("oz", "<Cmd>lua MiniMisc.zoom()<CR>", "Zoom toggle")
+nmap_leader("oz", function()
+	Snacks.toggle.zoom():toggle()
+end, "Zoom toggle")
 
 nmap_leader("ut", "<Cmd>UndotreeToggle<CR><Cmd>UndotreeFocus<CR>", "Undo tree")
 
@@ -186,42 +265,13 @@ map("c", "<C-b>", "<Left>")
 map("c", "<C-d>", "<Del>")
 map("c", "<C-h>", "<BS>")
 
-local terminals = {
-	horizontal = { buf = nil, win = nil },
-	vertical = { buf = nil, win = nil },
-}
-
-local function toggle_terminal(orientation, split_cmd)
-	local term = terminals[orientation]
-
-	if term.win and vim.api.nvim_win_is_valid(term.win) then
-		vim.api.nvim_win_close(term.win, true)
-		term.win = nil
-		return
-	end
-
-	if term.buf and vim.api.nvim_buf_is_valid(term.buf) then
-		vim.cmd(split_cmd)
-		term.win = vim.api.nvim_get_current_win()
-		vim.api.nvim_win_set_buf(term.win, term.buf)
-		vim.cmd("startinsert")
-		return
-	end
-
-	vim.cmd(split_cmd)
-	vim.cmd("term")
-	term.buf = vim.api.nvim_get_current_buf()
-	term.win = vim.api.nvim_get_current_win()
-	vim.cmd("startinsert")
-end
-
+-- Terminal (snacks.terminal; separate ids so both orientations coexist)
 nmap_leader("tt", function()
-	toggle_terminal("vertical", "vertical split")
+	Snacks.terminal.toggle(nil, { count = 1, win = { position = "right" } })
 end, "Terminal toggle (vertical)")
 nmap_leader("tT", function()
-	toggle_terminal("horizontal", "split")
+	Snacks.terminal.toggle(nil, { count = 2, win = { position = "bottom" } })
 end, "Terminal toggle (horizontal)")
--- Terminal
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- Clear search

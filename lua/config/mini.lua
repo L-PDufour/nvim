@@ -28,8 +28,7 @@ MiniMisc.setup_auto_root()
 MiniMisc.setup_restore_cursor()
 MiniMisc.setup_termbg_sync()
 
--- Notifications
-require("mini.notify").setup()
+-- Notifications and input UI are snacks (config/snacks.lua).
 
 -- Start screen
 -- require("mini.starter").setup()
@@ -76,7 +75,8 @@ MiniStatusline.setup({
 -- Text Objects & Motions
 -- ============================================================================
 require("treesitter-context").setup({})
--- Extra functionality
+-- Extra functionality (buffer textobject for mini.ai; the pickers are
+-- unused now that config/pick.lua uses snacks.picker)
 require("mini.extra").setup()
 
 -- AI textobjects
@@ -91,9 +91,6 @@ ai.setup({
 
 -- Bracketed navigation
 require("mini.bracketed").setup()
-
--- Indent scope
-require("mini.indentscope").setup()
 
 -- Surround
 require("mini.surround").setup()
@@ -127,17 +124,7 @@ require("mini.trailspace").setup()
 -- File Management
 -- ============================================================================
 
--- Buffer removal
-require("mini.bufremove").setup()
-
--- File explorer
-require("mini.files").setup({ windows = { preview = true } })
-
-local add_marks = function()
-	MiniFiles.set_bookmark("c", vim.fn.stdpath("config"), { desc = "Config" })
-	MiniFiles.set_bookmark("w", vim.fn.getcwd, { desc = "Working directory" })
-end
-_G.Config.autocmd("User", "MiniFilesExplorerOpen", add_marks, "Add bookmarks")
+-- Buffer removal and the file explorer are snacks (config/snacks.lua).
 
 -- ============================================================================
 -- Git
@@ -145,9 +132,6 @@ _G.Config.autocmd("User", "MiniFilesExplorerOpen", add_marks, "Add bookmarks")
 
 -- Diff
 require("mini.diff").setup()
-
--- Git integration
-require("mini.git").setup()
 
 -- ============================================================================
 -- Highlighting & UI
@@ -170,15 +154,8 @@ hipatterns.setup({
 -- Pickers & Input
 -- ============================================================================
 
--- Pick (replaces fzf-lua); also take over `vim.ui.select`
-local MiniPick = require("mini.pick")
-MiniPick.setup()
-vim.ui.select = MiniPick.ui_select
-
--- Floating `vim.ui.input` (LSP rename, compile prompt, etc.)
-local MiniInput = require("mini.input")
-MiniInput.setup()
-vim.ui.input = MiniInput.ui_input
+-- Pickers and vim.ui.select/vim.ui.input are snacks (config/snacks.lua and
+-- config/pick.lua).
 
 -- ============================================================================
 -- External Plugins

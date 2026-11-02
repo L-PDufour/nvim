@@ -92,7 +92,7 @@ end
 -- *compile* that never quits.
 --   • build/runtime errors stream into the quickfix WITHOUT stealing focus
 --     (no `open=true`), so you look them up on demand with :cnext/<leader>qq.
---   • we ping via mini.notify when an error line shows up in the output — this
+--   • we ping via snacks.notifier when an error line shows up in the output — this
 --     is the real feedback loop, because air swallows build errors and keeps the
 --     task alive, so "task exited nonzero" never fires. (See GO_ERRFMT & the
 --     on_output_lines handler below.)

@@ -2,12 +2,12 @@
 --
 -- Collects context-sensitive actions for whatever is under the cursor
 -- (diagnostic, URL, file path, git hunk, LSP symbol, plain word) and
--- offers them through vim.ui.select (mini.pick).
+-- offers them through vim.ui.select (snacks.picker).
 --
--- The other half of embark (act on minibuffer candidates) is already
--- covered by mini.pick itself: <C-x> marks an entry, <C-a> marks all,
--- <M-CR> sends the marked entries to the quickfix list — which quicker
--- then makes editable (embark-export + wgrep in one move).
+-- The other half of embark (act on picker candidates) is already covered by
+-- snacks.picker itself: <Tab> marks an entry, <C-a> marks all, and <C-q>
+-- sends the marked entries to the quickfix list — which quicker then makes
+-- editable (embark-export + wgrep in one move).
 
 local function candidates()
 	local acts = {}
@@ -54,7 +54,11 @@ local function candidates()
 				vim.cmd.split(path)
 			end)
 			add("file │ explore directory", function()
-				MiniFiles.open(path)
+				if vim.fn.isdirectory(path) == 1 then
+					Snacks.explorer({ cwd = path })
+				else
+					Snacks.explorer.reveal({ file = path })
+				end
 			end)
 			add("file │ yank path", function()
 				vim.fn.setreg("+", path)
@@ -65,7 +69,7 @@ local function candidates()
 	-- Git hunk / history at point (only in git-tracked buffers)
 	if require("mini.diff").get_buf_data(0) ~= nil then
 		add("git │ show at cursor (hunk/blame)", function()
-			MiniGit.show_at_cursor()
+			Snacks.picker.git_log_line()
 		end)
 		add("git │ toggle diff overlay", function()
 			MiniDiff.toggle_overlay()
@@ -77,7 +81,7 @@ local function candidates()
 		add("lsp │ code action", vim.lsp.buf.code_action)
 		add("lsp │ rename", vim.lsp.buf.rename)
 		add("lsp │ references", function()
-			MiniExtra.pickers.lsp({ scope = "references" })
+			Snacks.picker.lsp_references()
 		end)
 		add("lsp │ hover doc", vim.lsp.buf.hover)
 	end
@@ -85,7 +89,7 @@ local function candidates()
 	-- Plain word fallbacks
 	if cword ~= "" then
 		add("word │ grep project: " .. cword, function()
-			MiniPick.builtin.grep({ pattern = cword })
+			Snacks.picker.grep({ search = cword })
 		end)
 		add("word │ help: " .. cword, function()
 			local ok = pcall(vim.cmd.help, cword)

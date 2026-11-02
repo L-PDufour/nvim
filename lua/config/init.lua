@@ -19,25 +19,25 @@ _G.Config = {
 		})
 	end,
 
-	-- Store leader group info for mini.clue
+	-- Leader group info shared with which-key (see config/mini.lua)
 	leader_groups = {},
 }
 
 -- Load configuration modules in order
 require("config.options") -- Vim options
 require("config.themes") -- Vim options
+require("config.snacks") -- Snacks UI layer (picker, notifier, input, explorer)
 require("config.autocmds") -- Autocommands
 require("config.keymaps") -- General keymaps
-require("config.mini") -- All mini.nvim setup
+require("config.mini") -- Remaining mini.nvim modules
 require("config.lsp") -- LSP configuration
 require("config.cmp") -- Completion setup
 require("config.dap") -- DAP (debugger) setup
 require("config.org")
 require("config.quicker")
 require("config.compile") -- Emacs-style :Compile/:Recompile (overseer)
-require("config.snacks") -- Persistent scratch buffers
 require("config.act") -- Embark-style act-at-point (g.)
 require("config.ai") -- CodeCompanion: DeepSeek chat + opencode ACP agent
-require("config.pick")
+require("config.pick") -- Snacks picker keymaps
 require("config.dadbod")
 require("config.devdocs") -- DevDocs offline documentation

@@ -54,8 +54,8 @@ config with `NVIM_APPNAME=nvim-test nvim` without touching the main one.
 - **embark-act** — `g.` pops a context menu of actions for the thing at
   point: diagnostic, URL, file path, git hunk, LSP symbol, plain word
   (`lua/config/act.lua`).
-- **embark-export + wgrep** — in any mini.pick picker, `<C-a>` marks all
-  candidates (`<C-x>` marks one) and `<M-CR>` sends them to the quickfix
+- **embark-export + wgrep** — in any snacks picker, `<Tab>` marks one
+  candidate, `<C-a>` marks all, and `<C-q>` sends them to the quickfix
   list; quicker makes that buffer editable, so `:w` there applies your
   edits back to the underlying files.
 
