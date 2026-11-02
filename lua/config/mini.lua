@@ -75,7 +75,7 @@ MiniStatusline.setup({
 -- ============================================================================
 -- Text Objects & Motions
 -- ============================================================================
-
+require("treesitter-context").setup({})
 -- Extra functionality
 require("mini.extra").setup()
 
