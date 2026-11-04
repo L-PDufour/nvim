@@ -1,9 +1,21 @@
--- CodeCompanion: AI chat in a native markdown buffer. One UI, two adapters:
---  • deepseek (http) — direct API calls; default for Q&A and the teaching
---    prompts below. Key is read from ~/.config/deepseek/api_key.
---  • opencode (acp)  — drives the `opencode` CLI as an ACP agent for
---    repo-level questions and multi-file work; model/auth come from
---    opencode's own config (`opencode auth login`, managed in nixcfg).
+-- CodeCompanion: one UI, four ways in.
+--  • <Leader>ac  chat, deepseek (http), no tools — cheap Q&A. Key is read
+--                from ~/.config/deepseek/api_key.
+--  • <Leader>ax  same chat, but with the `agent` tool group preloaded, so it
+--                can read/grep/edit files and run commands. Approvals are
+--                `ask` by default: g1 always, g2 once, g3 reject, g4 cancel;
+--                `gty` in the chat buffer switches the approval mode.
+--                (Tools can also be added to any chat by typing `@`.)
+--  • <Leader>ai  inline edit on a selection (or the current line) — no chat
+--                buffer; shows a diff, g2 accepts, g3 reverts.
+--  • <Leader>ao  opencode (acp) — the `opencode` CLI as an ACP agent for
+--                repo-level/multi-file work; model and auth come from
+--                opencode's own config (`opencode auth login`, in nixcfg).
+--                ACP can't render an agent's plan or use a Neovim terminal,
+--                which is why it is the "big job" door, not the default.
+--
+-- CodeCompanion autoloads AGENTS.md/CLAUDE.md rules from the cwd, so the
+-- chat and agent modes inherit this repo's guidelines automatically.
 local codecompanion = require("codecompanion")
 local key_file = vim.fn.expand("~/.config/deepseek/api_key")
 
@@ -40,7 +52,7 @@ codecompanion.setup({
 		["Tutor"] = {
 			strategy = "chat",
 			description = "Socratic tutor on the selected code",
-			opts = { modes = { "v" }, short_name = "tutor", auto_submit = true, stop_context_insertion = true },
+			opts = { modes = { "v" }, alias = "tutor", auto_submit = true, stop_context_insertion = true },
 			prompts = {
 				{
 					role = "system",
@@ -53,7 +65,7 @@ codecompanion.setup({
 				{
 					role = "user",
 					content = function(context)
-						local code = require("codecompanion.helpers.actions").get_code(context.start_line, context.end_line)
+						local code = require("codecompanion.helpers.code").get_code(context.start_line, context.end_line)
 						return "I want to understand this "
 							.. context.filetype
 							.. " code:\n\n```"
@@ -66,10 +78,10 @@ codecompanion.setup({
 				},
 			},
 		},
-		["Explain"] = {
+		["Teach"] = {
 			strategy = "chat",
-			description = "Explain the selected code in depth",
-			opts = { modes = { "v" }, short_name = "explain", auto_submit = true, stop_context_insertion = true },
+			description = "Explain the selected code in depth (teacher voice)",
+			opts = { modes = { "v" }, alias = "teach", auto_submit = true, stop_context_insertion = true },
 			prompts = {
 				{
 					role = "system",
@@ -81,7 +93,7 @@ codecompanion.setup({
 				{
 					role = "user",
 					content = function(context)
-						local code = require("codecompanion.helpers.actions").get_code(context.start_line, context.end_line)
+						local code = require("codecompanion.helpers.code").get_code(context.start_line, context.end_line)
 						return "Explain this "
 							.. context.filetype
 							.. " code:\n\n```"
@@ -101,12 +113,25 @@ local function map(mode, lhs, rhs, desc)
 	vim.keymap.set(mode, lhs, rhs, { desc = desc, silent = true })
 end
 
+-- Agent chat: same markdown buffer as <Leader>ac, but the built-in `agent`
+-- tool group (read_file, grep_search, insert_edit_into_file, run_command, ...)
+-- is preloaded. `CodeCompanion.chat()` does not forward `tools`, so go
+-- through the interaction directly.
+local function agent_chat()
+	local context = require("codecompanion.utils.context").get(vim.api.nvim_get_current_buf())
+	require("codecompanion.interactions.chat").new({ tools = { "agent" }, buffer_context = context })
+end
+
 map({ "n", "v" }, "<Leader>ac", "<Cmd>CodeCompanionChat Toggle<CR>", "AI chat (deepseek)")
 map({ "n", "v" }, "<Leader>aa", "<Cmd>CodeCompanionActions<CR>", "AI action palette")
+map("n", "<Leader>ax", agent_chat, "AI agent chat (tools)")
 map("n", "<Leader>ao", "<Cmd>CodeCompanionChat opencode<CR>", "AI chat (opencode agent)")
--- ":" on purpose: keeps the visual range so the selection reaches the prompt
+-- ":" on purpose: keeps the visual range so the selection reaches the prompt.
+-- With no prompt the command asks for one, then edits the range in place.
+map("v", "<Leader>ai", ":CodeCompanion<CR>", "AI inline edit selection")
+map("n", "<Leader>ai", "<Cmd>CodeCompanion<CR>", "AI inline edit")
 map("v", "<Leader>at", ":CodeCompanion /tutor<CR>", "AI tutor selection")
-map("v", "<Leader>ae", ":CodeCompanion /explain<CR>", "AI explain selection")
+map("v", "<Leader>ae", ":CodeCompanion /teach<CR>", "AI explain selection in depth")
 
 if vim.fn.filereadable(key_file) == 0 then
 	vim.notify("CodeCompanion: no DeepSeek key at " .. key_file, vim.log.levels.WARN)

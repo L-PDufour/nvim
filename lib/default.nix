@@ -49,6 +49,10 @@ rec {
       # dap
       nvim-dap
       nvim-dap-view
+      # disassembly: registers itself as a `disassembly` section of
+      # nvim-dap-view (see lua/config/dap.lua). Config is live; this entry
+      # only takes effect after `nix flake update nvim` in nixcfg.
+      nvim-dap-disasm
       nvim-nio
       nvim-dap-go
       nvim-dap-python

@@ -42,14 +42,10 @@ vim.diagnostic.config({
 
 -- Formatting
 require("conform").setup({
-	formatters = {
-		-- Use the project-pinned binary (requires the `go get -tool` directive).
-		templ = {
-			command = "go",
-			prepend_args = { "tool", "templ" },
-			cwd = require("conform.util").root_file({ "go.mod", "go.work" }),
-		},
-	},
+	-- `templ` uses conform's built-in definition (`templ fmt -stdin-filepath
+	-- $FILENAME`) with the Nix-provided binary. Deliberately not `go tool
+	-- templ`: that compiles templ on first use (tens of seconds) and blows the
+	-- format_on_save budget.
 	formatters_by_ft = {
 		lua = { "stylua" },
 		nix = { "nixfmt" },

@@ -193,18 +193,77 @@ nmap_leader("ut", "<Cmd>UndotreeToggle<CR><Cmd>UndotreeFocus<CR>", "Undo tree")
 -- d is for 'Debug' (DAP). Launch configurations come from each project's
 -- .vscode/launch.json; adapters live in config/dap.lua.
 local dap = require("dap")
+
+---Breakpoint on the cursor line, if any (used to prefill prompt defaults).
+---@return dap.bp|nil
+local function breakpoint_at_cursor()
+	local bufnr = vim.api.nvim_get_current_buf()
+	local line = vim.api.nvim_win_get_cursor(0)[1]
+	local by_buf = require("dap.breakpoints").get(bufnr)
+	return vim.iter(by_buf[bufnr] or {}):find(function(bp)
+		return bp.line == line
+	end)
+end
+
+-- `vim.ui.input` is snacks' floating input here, which honours the
+-- `completion` option (`getcompletion`). The expression completer only exists
+-- in newer nvim-dap-view (not in the 1.2.1 that nixpkgs ships), so check for
+-- it lazily and pass no completer rather than erroring.
+local function dv_completion()
+	local ok, dv = pcall(require, "dap-view")
+	if ok and dv.complete then
+		return "customlist,v:lua.require'dap-view'.complete"
+	end
+end
+
+local function set_condition()
+	local bp = breakpoint_at_cursor()
+	vim.ui.input({
+		prompt = "Breakpoint condition: ",
+		completion = dv_completion(),
+		default = (bp and bp.condition) or "",
+	}, function(input)
+		if input == nil then
+			return
+		end
+		dap.set_breakpoint(input ~= "" and input or nil)
+	end)
+end
+
+local function set_log_point()
+	local bp = breakpoint_at_cursor()
+	vim.ui.input({
+		prompt = "Log point message ({expr} is interpolated): ",
+		completion = dv_completion(),
+		default = (bp and bp.logMessage) or "",
+	}, function(input)
+		if input == nil then
+			return
+		end
+		dap.set_breakpoint(nil, nil, input ~= "" and input or nil)
+	end)
+end
+
 map("n", "<leader>db", dap.toggle_breakpoint, { desc = "Debug: Breakpoint" })
-map("n", "<leader>dB", function()
-	dap.set_breakpoint(vim.fn.input("Condition: "))
-end, { desc = "Debug: Conditional breakpoint" })
+map("n", "<leader>dB", set_condition, { desc = "Debug: Conditional breakpoint" })
+map("n", "<leader>dL", set_log_point, { desc = "Debug: Log point" })
 map("n", "<leader>dc", dap.continue, { desc = "Debug: Continue/start" })
 map("n", "<leader>dq", dap.terminate, { desc = "Debug: Terminate" })
 map("n", "<leader>di", dap.step_into, { desc = "Debug: Step into" })
 map("n", "<leader>do", dap.step_over, { desc = "Debug: Step over" })
 map("n", "<leader>dO", dap.step_out, { desc = "Debug: Step out" })
-map("n", "<leader>dr", dap.repl.open, { desc = "Debug: REPL" })
+map("n", "<leader>dr", "<Cmd>DapViewJump repl<CR>", { desc = "Debug: REPL" })
 map("n", "<leader>dv", "<Cmd>DapViewToggle<CR>", { desc = "Debug: Toggle UI" })
 map("n", "<leader>de", "<Cmd>DapViewHover<CR>", { desc = "Debug: Hover value" })
+-- ":" on purpose to keep the visual range (the command uses it)
+map("v", "<leader>de", ":DapViewHover<CR>", { desc = "Debug: Hover selection" })
+map("n", "<leader>dw", "<Cmd>DapViewWatch<CR>", { desc = "Debug: Watch value" })
+map("v", "<leader>dw", ":DapViewWatch<CR>", { desc = "Debug: Watch selection" })
+-- The disassembly section only exists once nvim-dap-disasm is in the store
+-- (see config/dap.lua); don't map a jump to an unknown view until then.
+if pcall(require, "dap-disasm") then
+	map("n", "<leader>dx", "<Cmd>DapViewJump disassembly<CR>", { desc = "Debug: Disassembly" })
+end
 nmap_leader("dt", require("dap-go").debug_test, "Debug: Test")
 nmap_leader("dT", require("dap-go").debug_last_test, "Debug: Last test")
 
@@ -212,9 +271,7 @@ nmap_leader("dT", require("dap-go").debug_last_test, "Debug: Last test")
 map("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
 map("n", "<S-F5>", dap.terminate, { desc = "Debug: Terminate" })
 map("n", "<F9>", dap.toggle_breakpoint, { desc = "Debug: Breakpoint" })
-map("n", "<S-F9>", function()
-	dap.set_breakpoint(vim.fn.input("Condition: "))
-end, { desc = "Debug: Conditional breakpoint" })
+map("n", "<S-F9>", set_condition, { desc = "Debug: Conditional breakpoint" })
 map("n", "<F10>", dap.step_over, { desc = "Debug: Step over" })
 map("n", "<F11>", dap.step_into, { desc = "Debug: Step into" })
 map("n", "<F12>", dap.step_out, { desc = "Debug: Step out" })
