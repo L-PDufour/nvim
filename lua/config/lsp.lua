@@ -3,6 +3,7 @@ vim.lsp.enable({
 	"golangci_lint_ls",
 	"gopls",
 	"html",
+	"postgres_lsp",
 	"pyright",
 	"templ",
 	"clangd",

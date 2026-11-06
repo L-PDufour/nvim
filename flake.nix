@@ -26,6 +26,8 @@
         # config snapshot baked into the store (old behavior)
         standalone = self.lib.mkNeovim { inherit system; embedConfig = true; };
         vimPlugin = self.lib.mkVimPlugin { inherit system; };
+        # the server alone: `nix build .#org-lsp`, or pin it from another flake
+        org-lsp   = (self.lib.mkOrgLsp { inherit system; }).server;
       });
 
       apps = forAllSystems (system: {
