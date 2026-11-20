@@ -112,7 +112,7 @@ require("mini.comment").setup()
 -- Operators
 
 -- Pairs
-require("mini.pairs").setup({ modes = { command = true } })
+-- require("mini.pairs").setup({ modes = { command = true } })
 
 -- Split/join
 require("mini.splitjoin").setup()

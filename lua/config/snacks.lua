@@ -13,7 +13,14 @@ snacks.setup({
 	-- Floating `vim.ui.input` (LSP rename, compile prompt, etc.)
 	input = { enabled = true },
 	-- All pickers; also takes over `vim.ui.select` (config.pick)
-	picker = { enabled = true },
+	picker = {
+		matcher = {
+			cwd_bonus = true, -- boost matches in current dir
+			frecency = true, -- frequency+recency bonus (the "recency" you want)
+			history_bonus = true, -- optional: slightly different scoring emphasizing order
+			filename_bonus = true, -- optional: slightly different scoring emphasizing order
+		},
+	},
 	-- File explorer (replaces netrw and mini.files)
 	explorer = {
 		enabled = true,
