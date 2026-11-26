@@ -1,8 +1,5 @@
 { inputs, pkgsFor }:
 rec {
-  # The Org language server and its Neovim plugin (lib/org-lsp.nix).
-  mkOrgLsp = { system }: import ./org-lsp.nix { pkgs = pkgsFor system; };
-
   mkVimPlugin =
     { system }:
     let
@@ -69,9 +66,7 @@ rec {
       codecompanion-nvim
 
       # misc
-      # org: the plugin binds the keys and registers the `org_lsp` client;
-      # the server binary comes from mkExtraPackages. Replaces `orgmode`.
-      (mkOrgLsp { inherit system; }).plugin
+      orgmode
       headlines-nvim
       devdocs-nvim
       quicker-nvim
@@ -119,10 +114,6 @@ rec {
       lua-language-server
       nixd
       marksman
-      # org: found on PATH by its plugin, which then never downloads a release
-      (mkOrgLsp { inherit system; }).server
-      # sql: Postgres syntax/type checking + formatting (after/lsp/postgres_lsp.lua)
-      postgres-language-server
       # project-sensitive servers (gopls, clangd, tsc, rust-analyzer, pyright)
       # come from project devShells
     ];

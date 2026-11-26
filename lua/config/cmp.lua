@@ -31,14 +31,18 @@ cmp.setup({
 	sources = {
 		default = { "lazydev", "lsp", "path", "snippets", "buffer" },
 		per_filetype = {
-			-- LSP first: the org_lsp server's completion (tags, keywords, links)
-			org = { "lsp", "path", "snippets", "buffer" },
+			org = { "orgmode" },
 			["gitcommit"] = { "conventional_commits", "spell", "buffer" },
-			sql = { "lsp", "dadbod", "buffer" },
-			mysql = { "lsp", "dadbod", "buffer" },
+			sql = { "dadbod", "buffer" },
+			mysql = { "dadbod", "buffer" },
 			plsql = { "dadbod", "buffer" },
 		},
 		providers = {
+			orgmode = {
+				name = "Orgmode",
+				module = "orgmode.org.autocompletion.blink",
+				fallbacks = { "buffer" },
+			},
 			conventional_commits = {
 				name = "Conventional Commits",
 				module = "blink-cmp-conventional-commits",
